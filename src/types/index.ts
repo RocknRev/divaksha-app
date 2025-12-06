@@ -108,3 +108,21 @@ export interface CreateSaleRequest {
   affiliateCode?: string;
 }
 
+// Cart Types
+export interface CartItem {
+  productId: number;
+  productName: string;
+  price: number;
+  quantity: number;
+  imageUrl?: string;
+}
+
+export interface CartContextType {
+  items: CartItem[];
+  addToCart: (product: Product, quantity?: number) => void;
+  removeFromCart: (productId: number) => void;
+  updateQuantity: (productId: number, quantity: number) => void;
+  getCartTotal: () => number;
+  getCartItemCount: () => number;
+  clearCart: () => void;
+}

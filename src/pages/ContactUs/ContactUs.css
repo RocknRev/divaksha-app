@@ -1,0 +1,26 @@
+.contact-us-container {
+  min-height: 70vh;
+}
+
+.contact-info-item {
+  text-align: center;
+  padding: 1rem;
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
+}
+
+.contact-info-item:hover {
+  background-color: #f8f9fa;
+}
+
+.contact-icon {
+  font-size: 2.5rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .contact-us-container h1 {
+    font-size: 2rem;
+  }
+}
+

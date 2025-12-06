@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { AuthProvider } from './context/AuthContext';
+import { CartProvider } from './context/CartContext';
 import Navbar from './components/Navbar/Navbar';
 import Home from './pages/Home/Home';
 import Dashboard from './pages/Dashboard/Dashboard';
@@ -15,6 +16,8 @@ import OrdersPage from './pages/OrdersPage/OrdersPage';
 import AdminOrders from './pages/AdminOrders/AdminOrders';
 import ProductsList from './pages/ProductsList/ProductsList';
 import ProductDetails from './pages/ProductDetails/ProductDetails';
+import Cart from './pages/Cart/Cart';
+import ContactUs from './pages/ContactUs/ContactUs';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 import LedgerList from './pages/LedgerList/LedgerList';
 import ShiftHistoryList from './pages/ShiftHistoryList/ShiftHistoryList';
@@ -24,10 +27,11 @@ import ReportsHome from './pages/Reports/ReportsHome';
 function App() {
   return (
     <AuthProvider>
-      <Router>
-        <div className="App">
-          <Navbar />
-          <Routes>
+      <CartProvider>
+        <Router>
+          <div className="App">
+            <Navbar />
+            <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<RegisterUser />} />
@@ -49,6 +53,8 @@ function App() {
             />
                   <Route path="/products" element={<ProductsList />} />
                   <Route path="/products/:productId" element={<ProductDetails />} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/contact" element={<ContactUs />} />
             <Route path="/aff/:code" element={<AffiliateLanding />} />
             <Route path="/ledger" element={<LedgerList />} />
             <Route path="/shift-history" element={<ShiftHistoryList />} />
@@ -60,6 +66,7 @@ function App() {
           </Routes>
         </div>
       </Router>
+      </CartProvider>
     </AuthProvider>
   );
 }

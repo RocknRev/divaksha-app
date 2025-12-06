@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Card, Button, Badge, Alert as BootstrapAlert } from 'react-bootstrap';
 import { productService } from '../../api/productService';
 import { Product } from '../../types';
+import { useCart } from '../../context/CartContext';
 import Loader from '../../components/Loader/Loader';
 import Alert from '../../components/Alert/Alert';
 import './ProductDetails.css';
@@ -13,6 +14,8 @@ const ProductDetails: React.FC = () => {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [quantity, setQuantity] = useState(1);
+  const { addToCart } = useCart();
 
   useEffect(() => {
     if (productId) {
@@ -40,6 +43,12 @@ const ProductDetails: React.FC = () => {
   const handleBuyNow = () => {
     if (product) {
       navigate(`/orders/${product.productId}`);
+    }
+  };
+
+  const handleAddToCart = () => {
+    if (product) {
+      addToCart(product, quantity);
     }
   };
 
@@ -167,16 +176,47 @@ const ProductDetails: React.FC = () => {
               </ul>
             </div>
 
-            {/* Buy Now Button */}
+            {/* Quantity Selector */}
+            <div className="product-quantity mb-4">
+              <label className="fw-semibold mb-2 d-block">Quantity</label>
+              <div className="d-flex align-items-center gap-3">
+                <Button
+                  variant="outline-secondary"
+                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                  disabled={quantity <= 1}
+                >
+                  −
+                </Button>
+                <span className="quantity-display fw-bold fs-5">{quantity}</span>
+                <Button variant="outline-secondary" onClick={() => setQuantity(quantity + 1)}>
+                  +
+                </Button>
+                <span className="ms-auto text-muted">
+                  Subtotal: <strong className="text-primary">₹{(product.price * quantity).toFixed(2)}</strong>
+                </span>
+              </div>
+            </div>
+
+            {/* Buy Now and Add to Cart Buttons */}
             <div className="product-actions">
-              <Button
-                variant="primary"
-                size="lg"
-                className="w-100 fw-bold py-3 mb-3"
-                onClick={handleBuyNow}
-              >
-                🛒 Buy Now - ₹{product.price.toFixed(2)}
-              </Button>
+              <div className="d-grid gap-2 mb-3">
+                <Button
+                  variant="outline-primary"
+                  size="lg"
+                  className="fw-bold py-3"
+                  onClick={handleAddToCart}
+                >
+                  ➕ Add to Cart
+                </Button>
+                <Button
+                  variant="primary"
+                  size="lg"
+                  className="fw-bold py-3"
+                  onClick={handleBuyNow}
+                >
+                  🛒 Buy Now - ₹{(product.price * quantity).toFixed(2)}
+                </Button>
+              </div>
               <Button
                 variant="outline-secondary"
                 size="lg"

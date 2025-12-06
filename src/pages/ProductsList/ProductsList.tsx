@@ -4,6 +4,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { productService } from '../../api/productService';
 import { Product } from '../../types';
 import { authUtils } from '../../utils/auth';
+import { useCart } from '../../context/CartContext';
 import Loader from '../../components/Loader/Loader';
 import Alert from '../../components/Alert/Alert';
 import './ProductsList.css';
@@ -15,6 +16,7 @@ const ProductsList: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const { addToCart } = useCart();
 
   useEffect(() => {
     loadProducts();
@@ -44,6 +46,11 @@ const ProductsList: React.FC = () => {
   const handleBuyNow = (productId: number, e?: React.MouseEvent) => {
     e?.stopPropagation(); // Prevent card click event
     navigate(`/orders/${productId}`);
+  };
+
+  const handleAddToCart = (product: Product, e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent card click event
+    addToCart(product, 1);
   };
 
   const handleProductClick = (productId: number) => {
@@ -162,14 +169,24 @@ const ProductsList: React.FC = () => {
                               ₹{product.price.toFixed(2)}
                             </Card.Text>
                           </div>
-                          <Button
-                            variant="primary"
-                            className="w-100 fw-semibold"
-                            size="lg"
-                            onClick={(e) => handleBuyNow(product.productId, e)}
-                          >
-                            🛒 Buy Now
-                          </Button>
+                          <div className="d-grid gap-2">
+                            <Button
+                              variant="outline-primary"
+                              className="fw-semibold"
+                              size="lg"
+                              onClick={(e) => handleAddToCart(product, e)}
+                            >
+                              ➕ Add to Cart
+                            </Button>
+                            <Button
+                              variant="primary"
+                              className="fw-semibold"
+                              size="lg"
+                              onClick={(e) => handleBuyNow(product.productId, e)}
+                            >
+                              🛒 Buy Now
+                            </Button>
+                          </div>
                         </div>
                       </Card.Body>
                     </Card>

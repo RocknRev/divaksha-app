@@ -521,7 +521,7 @@ const OrdersPage: React.FC = () => {
                         </div>
                         <div className="d-flex justify-content-between mb-2">
                           <span className="text-muted">UPI ID:</span>
-                          {!copied&&<code className="fs-8 text-primary" onClick={copyUpiId}>{UPI_ID} </code>}
+                          {!copied&&<code className="fs-8 text-primary" style={{cursor: 'pointer'}} onClick={copyUpiId}>{UPI_ID} </code>}
                           {copied&&<span className="text-muted">'✓ Copied!'</span>}
                         </div>
                       </div>

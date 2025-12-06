@@ -1,7 +1,8 @@
 import React from 'react';
-import { Navbar as BootstrapNavbar, Nav, Container, NavDropdown } from 'react-bootstrap';
+import { Navbar as BootstrapNavbar, Nav, Container, NavDropdown, Badge } from 'react-bootstrap';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useCart } from '../../context/CartContext';
 import { isAdmin } from '../../utils/admin';
 import './Navbar.css';
 
@@ -9,6 +10,8 @@ const Navbar: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { isAuthenticated, currentUser, logout } = useAuth();
+  const { getCartItemCount } = useCart();
+  const cartItemCount = getCartItemCount();
 
   const isActive = (path: string) => {
     return location.pathname === path;
@@ -72,6 +75,17 @@ const Navbar: React.FC = () => {
             )}
           </Nav>
           <Nav>
+            <Nav.Link as={Link} to="/cart" className={isActive('/cart') ? 'active' : ''}>
+              🛒 Cart
+              {cartItemCount > 0 && (
+                <Badge bg="danger" className="ms-1" pill>
+                  {cartItemCount}
+                </Badge>
+              )}
+            </Nav.Link>
+            <Nav.Link as={Link} to="/contact" className={isActive('/contact') ? 'active' : ''}>
+              Contact Us
+            </Nav.Link>
             {isAuthenticated && currentUser ? (
               <NavDropdown title={`👤 ${currentUser.username}`} id="user-dropdown" align="end">
                 <NavDropdown.Item as={Link} to="/dashboard">
