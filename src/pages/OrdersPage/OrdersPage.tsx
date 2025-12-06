@@ -30,7 +30,7 @@ const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
 const ALLOWED_IMAGE_TYPES = ['image/png', 'image/jpeg', 'image/jpg'];
 
 // UPI ID - can be configured via environment variable
-const UPI_ID = process.env.REACT_APP_UPI_ID || 'your-vpa@bank';
+const UPI_ID = process.env.REACT_APP_UPI_ID || 'rakesh.isl2025@okhdfcbank';
 const MERCHANT_NAME = process.env.REACT_APP_MERCHANT_NAME || 'Divaksha';
 
 const OrdersPage: React.FC = () => {
@@ -44,6 +44,7 @@ const OrdersPage: React.FC = () => {
   const [success, setSuccess] = useState<string | null>(null);
   const [showOrderModal, setShowOrderModal] = useState(false);
   const [createdOrder, setCreatedOrder] = useState<{ orderId: number } | null>(null);
+  const [copied, setCopied] = useState(false);
   
   // Two-step flow state
   const [step, setStep] = useState<1 | 2>(1);
@@ -118,7 +119,7 @@ const OrdersPage: React.FC = () => {
   const upiUri = product
     ? `upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(MERCHANT_NAME)}&am=${calculateTotal()}&cu=INR`
     : '';
-
+  
   // Step 1: Submit delivery details
   const onStep1Submit = async (data: OrderFormData) => {
     if (!product) {
@@ -244,6 +245,12 @@ const OrdersPage: React.FC = () => {
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
+  };
+
+  const copyUpiId = () => {
+      navigator.clipboard.writeText(UPI_ID);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
   };
 
   if (loading) {
@@ -514,7 +521,8 @@ const OrdersPage: React.FC = () => {
                         </div>
                         <div className="d-flex justify-content-between mb-2">
                           <span className="text-muted">UPI ID:</span>
-                          <code className="text-primary">{UPI_ID}</code>
+                          {!copied&&<code className="fs-8 text-primary" onClick={copyUpiId}>{UPI_ID} </code>}
+                          {copied&&<span className="text-muted">'✓ Copied!'</span>}
                         </div>
                       </div>
                       <div className="upi-instructions mt-3 p-3 bg-info bg-opacity-10 rounded">
@@ -550,7 +558,7 @@ const OrdersPage: React.FC = () => {
                           {paymentProofError}
                         </Form.Control.Feedback>
                         <Form.Text className="text-muted">
-                          Upload PNG, JPG, or JPEG (Max 5MB)
+                          Upload PNG, JPG, or JPEG (Max 2MB)
                         </Form.Text>
                       </Form.Group>
 

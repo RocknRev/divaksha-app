@@ -17,7 +17,7 @@
 - ✅ Total amount display
 - ✅ **Screenshot upload field** (replaces Payment Proof)
   - Accepts PNG, JPG, JPEG only
-  - Max 5MB validation
+  - Max 2MB validation
   - Image preview with remove option
   - Base64 conversion for API
 - ✅ Order summary card
