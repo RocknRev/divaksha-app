@@ -28,7 +28,7 @@ const Dashboard: React.FC = () => {
       navigate('/users/register');
       return;
     }
-    loadUserData();
+    loadUserData();loadReferralTree();loadCommissions();
   }, [currentUser, navigate]);
 
   const loadUserData = async () => {
@@ -277,7 +277,7 @@ const Dashboard: React.FC = () => {
             </Card.Body>
           </Card>
         </Tab>
-        <Tab eventKey="commissions" title="Commissions" onEnter={loadCommissions}>
+        <Tab eventKey="commissions" title="Commissions" >
           <Card>
             <Card.Body>
               <div className="d-flex justify-content-between align-items-center mb-3">
@@ -319,7 +319,7 @@ const Dashboard: React.FC = () => {
             </Card.Body>
           </Card>
         </Tab>
-        <Tab eventKey="tree" title="Referral Tree" onEnter={loadReferralTree}>
+        <Tab eventKey="tree" title="Referral Tree" >
           <Card>
             <Card.Body>
               {treeLoading ? (
