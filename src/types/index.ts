@@ -46,6 +46,7 @@ export interface Order {
   deliveryPhone?: string;
   deliveryName?: string;
   createdAt: string;
+  deliveryEmail: string;
 }
 
 export interface Product {
@@ -94,6 +95,7 @@ export interface CreateOrderRequest {
   deliveryAddress: string;
   deliveryPhone: string;
   deliveryName: string;
+  deliveryEmail: string;
 }
 
 export interface CreateSaleRequest {

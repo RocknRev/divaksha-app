@@ -41,8 +41,13 @@ const ProductsList: React.FC = () => {
     }
   };
 
-  const handleBuyNow = (productId: number) => {
+  const handleBuyNow = (productId: number, e?: React.MouseEvent) => {
+    e?.stopPropagation(); // Prevent card click event
     navigate(`/orders/${productId}`);
+  };
+
+  const handleProductClick = (productId: number) => {
+    navigate(`/products/${productId}`);
   };
 
   // Filter products based on search
@@ -117,7 +122,11 @@ const ProductsList: React.FC = () => {
               <Row>
                 {filteredProducts.map((product) => (
                   <Col key={product.productId} xs={12} sm={6} md={4} lg={3} className="mb-4">
-                    <Card className="h-100 product-card shadow-sm border-0">
+                    <Card
+                      className="h-100 product-card shadow-sm border-0"
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => handleProductClick(product.productId)}
+                    >
                       <div className="product-image-wrapper">
                         <Card.Img
                           variant="top"
@@ -132,9 +141,9 @@ const ProductsList: React.FC = () => {
                           <Button
                             variant="light"
                             className="overlay-button"
-                            onClick={() => handleBuyNow(product.productId)}
+                            onClick={(e) => handleProductClick(product.productId)}
                           >
-                            Quick View
+                            View Details
                           </Button>
                         </div>
                       </div>
@@ -157,7 +166,7 @@ const ProductsList: React.FC = () => {
                             variant="primary"
                             className="w-100 fw-semibold"
                             size="lg"
-                            onClick={() => handleBuyNow(product.productId)}
+                            onClick={(e) => handleBuyNow(product.productId, e)}
                           >
                             🛒 Buy Now
                           </Button>

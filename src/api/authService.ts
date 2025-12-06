@@ -19,6 +19,7 @@ export interface AuthResponse {
   user: User;
   referralCode?: string;
   affiliateCode?: string;
+  referralLink?: string;
 }
 
 export const authService = {
@@ -31,5 +32,12 @@ export const authService = {
     const response = await apiClient.post<AuthResponse>('/auth/register', data);
     return response.data;
   },
-};
 
+  sendOtp: async (email: string): Promise<void> => {
+    await apiClient.post('/auth/send-email-otp', { email });
+  },
+
+  verifyOtp: async (email: string, otp: string): Promise<void> => {
+    await apiClient.post('/auth/verify-email-otp', { email, otp });
+  },
+};

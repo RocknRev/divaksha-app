@@ -22,6 +22,7 @@ interface OrderFormData {
   deliveryName: string;
   deliveryPhone: string;
   deliveryAddress: string;
+  deliveryEmail: string;
 }
 
 const AFFILIATE_CODE_STORAGE_KEY = 'affiliateCode';
@@ -62,6 +63,7 @@ const OrdersPage: React.FC = () => {
       quantity: 1,
       deliveryName: currentUser?.username || '',
       deliveryPhone: currentUser?.phone || '',
+      deliveryEmail: currentUser?.email || '',
       deliveryAddress: '',
       landmark:'',
       city:'',
@@ -88,6 +90,7 @@ const OrdersPage: React.FC = () => {
         quantity: 1,
         deliveryName: currentUser.username || '',
         deliveryPhone: currentUser.phone || '',
+        deliveryEmail: currentUser.email || '',
         deliveryAddress: '',
       });
     }
@@ -210,6 +213,7 @@ const OrdersPage: React.FC = () => {
         deliveryName: deliveryData.deliveryName,
         deliveryPhone: deliveryData.deliveryPhone,
         deliveryAddress: deliveryData.deliveryAddress,
+        deliveryEmail: deliveryData.deliveryEmail
       };
 
       const order = await orderService.createOrder(orderData);
@@ -332,7 +336,26 @@ const OrdersPage: React.FC = () => {
 
                 <Form onSubmit={handleSubmit(onStep1Submit)}> 
                   
-                  <Form.Group className="mb-3"> <Form.Label className="fw-semibold"> Quantity <span className="text-danger">*</span> </Form.Label> <Form.Control type="number" min="1" {...register('quantity', { required: 'Quantity is required', min: { value: 1, message: 'Quantity must be at least 1' }, valueAsNumber: true, })} isInvalid={!!errors.quantity} className="form-control-lg" /> <Form.Control.Feedback type="invalid"> {errors.quantity?.message} </Form.Control.Feedback> </Form.Group> <hr className="my-4" /> <Form.Group className="mb-3"> <Form.Label className="fw-semibold"> Full Name <span className="text-danger">*</span> </Form.Label> <Form.Control type="text" {...register('deliveryName', { required: 'Full name is required', minLength: { value: 2, message: 'Name must be at least 2 characters' }, })} placeholder="Enter your full name" isInvalid={!!errors.deliveryName} className="form-control-lg" /> <Form.Control.Feedback type="invalid"> {errors.deliveryName?.message} </Form.Control.Feedback> </Form.Group> <Form.Group className="mb-3"> <Form.Label className="fw-semibold"> Contact Phone <span className="text-danger">*</span> </Form.Label> <Form.Control type="tel" {...register('deliveryPhone', { required: 'Phone number is required', pattern: { value: /^[6-9]\d{9}$/, message: 'Please enter a valid 10-digit mobile number', }, })} placeholder="Enter 10-digit mobile number" isInvalid={!!errors.deliveryPhone} className="form-control-lg" /> <Form.Control.Feedback type="invalid"> {errors.deliveryPhone?.message} </Form.Control.Feedback> </Form.Group>
+                  <Form.Group className="mb-3"> 
+                    <Form.Label className="fw-semibold"> Quantity <span className="text-danger">*</span> </Form.Label> 
+                    <Form.Control type="number" min="1" {...register('quantity', { required: 'Quantity is required', min: { value: 1, message: 'Quantity must be at least 1' }, valueAsNumber: true, })} isInvalid={!!errors.quantity} className="form-control-lg" /> 
+                    <Form.Control.Feedback type="invalid"> {errors.quantity?.message} </Form.Control.Feedback> 
+                  </Form.Group> <hr className="my-4" /> 
+                  <Form.Group className="mb-3"> 
+                    <Form.Label className="fw-semibold"> Full Name <span className="text-danger">*</span> </Form.Label> 
+                    <Form.Control type="text" {...register('deliveryName', { required: 'Full name is required', minLength: { value: 2, message: 'Name must be at least 2 characters' }, })} placeholder="Enter your full name" isInvalid={!!errors.deliveryName} className="form-control-lg" /> 
+                    <Form.Control.Feedback type="invalid"> {errors.deliveryName?.message} </Form.Control.Feedback> 
+                  </Form.Group> 
+                  <Form.Group className="mb-3"> 
+                    <Form.Label className="fw-semibold"> Email Address <span className="text-danger">*</span> </Form.Label> 
+                    <Form.Control type="text" {...register('deliveryEmail', { required: 'Email address is required', minLength: { value: 2, message: 'Enter Valid Email' }, })} placeholder="Enter your email address" isInvalid={!!errors.deliveryEmail} className="form-control-lg" /> 
+                    <Form.Control.Feedback type="invalid"> {errors.deliveryEmail?.message} </Form.Control.Feedback> 
+                  </Form.Group> 
+                  <Form.Group className="mb-3"> 
+                    <Form.Label className="fw-semibold"> Contact Phone <span className="text-danger">*</span> </Form.Label> 
+                    <Form.Control type="tel" {...register('deliveryPhone', { required: 'Phone number is required', pattern: { value: /^[6-9]\d{9}$/, message: 'Please enter a valid 10-digit mobile number', }, })} placeholder="Enter 10-digit mobile number" isInvalid={!!errors.deliveryPhone} className="form-control-lg" /> 
+                    <Form.Control.Feedback type="invalid"> {errors.deliveryPhone?.message} </Form.Control.Feedback> 
+                  </Form.Group>
                   {/* Door/Flat No */}
                   <Form.Group className="mb-3">
                     <Form.Label className="fw-semibold">

@@ -354,7 +354,7 @@ const AdminOrders: React.FC = () => {
                 <p className="mb-1"><strong>Buyer ID:</strong> {selectedOrder.buyerId}</p>
                 <p className="mb-1"><strong>Quantity:</strong> {selectedOrder.quantity || 1}</p>
                 <p className="mb-1"><strong>Amount:</strong> ₹{selectedOrder.amount.toFixed(2)}</p>
-                <p className="mb-1"><strong>Payment Proof:</strong> <code>{selectedOrder.paymentProofUrl}</code></p>
+                {/* <p className="mb-1"><strong>Payment Proof:</strong> <code>{selectedOrder.paymentProofUrl}</code></p> */}
                 {selectedOrder.deliveryName && (
                   <>
                     <hr className="my-2" />
@@ -401,7 +401,7 @@ const AdminOrders: React.FC = () => {
                 <p className="mb-1"><strong>Buyer ID:</strong> {selectedOrder.buyerId}</p>
                 <p className="mb-1"><strong>Quantity:</strong> {selectedOrder.quantity || 1}</p>
                 <p className="mb-1"><strong>Amount:</strong> ₹{selectedOrder.amount.toFixed(2)}</p>
-                <p className="mb-1"><strong>Payment Proof:</strong> <code>{selectedOrder.paymentProofUrl}</code></p>
+                {/* <p className="mb-1"><strong>Payment Proof:</strong> <code>{selectedOrder.paymentProofUrl}</code></p> */}
                 {selectedOrder.deliveryName && (
                   <>
                     <hr className="my-2" />

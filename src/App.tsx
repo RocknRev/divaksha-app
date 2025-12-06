@@ -14,6 +14,7 @@ import SalesList from './pages/SalesList/SalesList';
 import OrdersPage from './pages/OrdersPage/OrdersPage';
 import AdminOrders from './pages/AdminOrders/AdminOrders';
 import ProductsList from './pages/ProductsList/ProductsList';
+import ProductDetails from './pages/ProductDetails/ProductDetails';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 import LedgerList from './pages/LedgerList/LedgerList';
 import ShiftHistoryList from './pages/ShiftHistoryList/ShiftHistoryList';
@@ -46,7 +47,8 @@ function App() {
                 </ProtectedRoute>
               }
             />
-            <Route path="/products" element={<ProductsList />} />
+                  <Route path="/products" element={<ProductsList />} />
+                  <Route path="/products/:productId" element={<ProductDetails />} />
             <Route path="/aff/:code" element={<AffiliateLanding />} />
             <Route path="/ledger" element={<LedgerList />} />
             <Route path="/shift-history" element={<ShiftHistoryList />} />
