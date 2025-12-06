@@ -1,0 +1,48 @@
+.home-container {
+  margin-top: 2rem;
+  padding-bottom: 3rem;
+}
+
+.hero-section {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 20px;
+  color: white;
+  padding: 4rem 2rem !important;
+  margin-bottom: 3rem;
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #fff 0%, #f0f0f0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.feature-card {
+  transition: transform 0.3s, box-shadow 0.3s;
+  border-radius: 15px;
+}
+
+.feature-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15) !important;
+}
+
+.feature-icon {
+  font-size: 3rem;
+}
+
+.info-card {
+  border-radius: 15px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+.info-card ol {
+  padding-left: 1.5rem;
+}
+
+.info-card li {
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+

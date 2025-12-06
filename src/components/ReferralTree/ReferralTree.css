@@ -1,0 +1,68 @@
+.referral-tree {
+  padding: 1rem;
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.tree-container {
+  position: relative;
+}
+
+.tree-node {
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+.node-content {
+  padding: 1rem;
+  background: #f8f9fa;
+  border: 2px solid #dee2e6;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.node-content:hover {
+  background: #e9ecef;
+  border-color: #adb5bd;
+  transform: translateX(5px);
+}
+
+.root-node {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-color: #667eea;
+  font-weight: bold;
+}
+
+.root-node:hover {
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+}
+
+.inactive-node {
+  opacity: 0.6;
+  border-color: #dc3545;
+}
+
+.node-info {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.node-id {
+  font-size: 0.85rem;
+  color: #6c757d;
+  margin-top: 0.25rem;
+}
+
+.root-node .node-id {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.tree-children {
+  margin-top: 0.5rem;
+  padding-left: 1rem;
+  border-left: 2px dashed #dee2e6;
+}
+

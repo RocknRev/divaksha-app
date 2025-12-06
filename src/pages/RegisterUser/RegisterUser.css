@@ -1,0 +1,17 @@
+.register-user-container {
+  margin-top: 3rem;
+  min-height: 70vh;
+  padding: 2rem 0;
+}
+
+.register-header {
+  margin-bottom: 2rem;
+}
+
+.register-header h2 {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
