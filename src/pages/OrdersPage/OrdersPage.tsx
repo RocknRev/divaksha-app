@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { Container, Card, Form, Button, Row, Col, Modal, Badge, Alert as BootstrapAlert } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
 import { QRCodeSVG } from 'qrcode.react';
 import { orderService } from '../../api/orderService';
 import { productService } from '../../api/productService';
-import { CreateOrderRequest, Product } from '../../types';
+import { CreateOrderRequest, Product, OrderResponse } from '../../types';
 import { useAuth } from '../../context/AuthContext';
+import { authUtils } from '../../utils/auth';
+import { compressImage } from '../../utils/imageUtils';
 import Alert from '../../components/Alert/Alert';
 import Loader from '../../components/Loader/Loader';
 import './OrdersPage.css';
@@ -35,6 +37,7 @@ const MERCHANT_NAME = process.env.REACT_APP_MERCHANT_NAME || 'Divaksha';
 
 const OrdersPage: React.FC = () => {
   const { productId } = useParams<{ productId: string }>();
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { currentUser } = useAuth();
   const [product, setProduct] = useState<Product | null>(null);
@@ -43,8 +46,13 @@ const OrdersPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [showOrderModal, setShowOrderModal] = useState(false);
-  const [createdOrder, setCreatedOrder] = useState<{ orderId: number } | null>(null);
+  const [showFailureModal, setShowFailureModal] = useState(false);
+  const [createdOrder, setCreatedOrder] = useState<OrderResponse | null>(null);
   const [copied, setCopied] = useState(false);
+  
+  // Get sellerId from URL ref parameter or localStorage
+  const refParam = searchParams.get('ref');
+  const sellerId = refParam ? parseInt(refParam, 10) : authUtils.getReferralId();
   
   // Two-step flow state
   const [step, setStep] = useState<1 | 2>(1);
@@ -79,10 +87,11 @@ const OrdersPage: React.FC = () => {
     if (productId) {
       loadProduct();
     } else {
-      setError('Product ID is required');
+      // If no productId, navigate to orders list or dashboard
       setLoading(false);
+      navigate('/dashboard');
     }
-  }, [productId]);
+  }, [productId, navigate]);
 
   // Update form defaults when currentUser changes
   useEffect(() => {
@@ -184,7 +193,7 @@ const OrdersPage: React.FC = () => {
 
   // Step 2: Confirm and place order
   const onStep2Submit = async () => {
-    if (!product || !deliveryData) {
+    if (!product || !deliveryData || !currentUser) {
       setError('Missing order information');
       return;
     }
@@ -203,36 +212,45 @@ const OrdersPage: React.FC = () => {
       // Get affiliateCode from localStorage
       const affiliateCode = localStorage.getItem(AFFILIATE_CODE_STORAGE_KEY);
 
+      // Build unified order request with items array (single item for single-product order)
       const orderData: CreateOrderRequest = {
-        buyerId: currentUser?.id,
-        sellerId: currentUser?.id,
-        productId: product.productId,
-        quantity: deliveryData.quantity,
+        buyerId: currentUser.id,
+        items: [
+          {
+            productId: product.productId,
+            quantity: deliveryData.quantity,
+            price: product.price,
+            sellerId: sellerId && !isNaN(sellerId) ? sellerId : null,
+          },
+        ],
+        totalAmount: totalAmount,
         paymentProofUrl: paymentProof,
-        amount: totalAmount,
-        affiliateCode: affiliateCode || undefined,
-        deliveryName: deliveryData.deliveryName,
-        deliveryPhone: deliveryData.deliveryPhone,
         deliveryAddress: deliveryData.deliveryAddress,
-        deliveryEmail: deliveryData.deliveryEmail
+        deliveryPhone: deliveryData.deliveryPhone,
+        deliveryName: deliveryData.deliveryName,
+        deliveryEmail: deliveryData.deliveryEmail,
+        affiliateCode: affiliateCode || null,
       };
 
-      const order = await orderService.createOrder(orderData);
-      setCreatedOrder({ orderId: order.orderId });
+      const order = await orderService.submitOrder(orderData);
+      setCreatedOrder(order);
       setSuccess('Order created successfully! Your order is pending payment approval.');
       setShowOrderModal(true);
       
-      // Clear affiliate code after order creation
+      // Clear affiliate code and referral after order creation
       if (affiliateCode) {
         localStorage.removeItem(AFFILIATE_CODE_STORAGE_KEY);
       }
+      authUtils.clearReferralId();
       
       // Reset form
       setStep(1);
       setPaymentProof(null);
       reset();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create order');
+      const errorMessage = err instanceof Error ? err.message : 'Failed to create order';
+      setError(errorMessage);
+      setShowFailureModal(true);
     } finally {
       setSubmitting(false);
     }
@@ -656,16 +674,20 @@ const OrdersPage: React.FC = () => {
             <div className="display-6 mb-2">🎉</div>
             <h4 className="fw-bold">Thank You for Your Order!</h4>
           </div>
-          <div className="order-details-card p-3 bg-light rounded mb-3">
-            <p className="mb-2"><strong>Order ID:</strong> <code className="fs-5">#{createdOrder?.orderId}</code></p>
-            <p className="mb-2"><strong>Product:</strong> {product.name}</p>
-            <p className="mb-2"><strong>Quantity:</strong> {deliveryData?.quantity || watchedQuantity}</p>
-            <p className="mb-2"><strong>Total Amount:</strong> ₹{calculateTotal().toFixed(2)}</p>
-            <p className="mb-2"><strong>Delivery To:</strong> {deliveryData?.deliveryName}</p>
-            <p className="mb-2"><strong>Delivery Address:</strong> {deliveryData?.deliveryAddress}</p>
-          </div>
+          {createdOrder && (
+            <div className="order-details-card p-3 bg-light rounded mb-3">
+              <p className="mb-2"><strong>Order ID:</strong> <code className="fs-5">#{createdOrder.orderId}</code></p>
+              <p className="mb-2"><strong>Product:</strong> {product.name}</p>
+              <p className="mb-2"><strong>Quantity:</strong> {deliveryData?.quantity || watchedQuantity}</p>
+              <p className="mb-2"><strong>Total Amount:</strong> ₹{createdOrder.totalAmount.toFixed(2)}</p>
+              <p className="mb-2"><strong>Delivery To:</strong> {createdOrder.deliveryName}</p>
+              <p className="mb-2"><strong>Delivery Address:</strong> {createdOrder.deliveryAddress}</p>
+              <p className="mb-2"><strong>Contact:</strong> {createdOrder.deliveryPhone} ({createdOrder.deliveryEmail})</p>
+              <p className="mb-0"><strong>Status:</strong> <Badge bg="warning">{createdOrder.status}</Badge></p>
+            </div>
+          )}
           <BootstrapAlert variant="info" className="mb-0">
-            <strong>Status: PENDING</strong>
+            <strong>Status: {createdOrder?.status || 'PENDING'}</strong>
             <p className="mb-0 small">
               Your order is pending payment approval. An admin will verify your payment screenshot and mark it as paid.
               Commissions will be distributed automatically once the order is approved.
@@ -673,6 +695,12 @@ const OrdersPage: React.FC = () => {
           </BootstrapAlert>
         </Modal.Body>
         <Modal.Footer>
+          <Button variant="outline-secondary" onClick={() => {
+            setShowOrderModal(false);
+            navigate('/products');
+          }}>
+            Continue Shopping
+          </Button>
           <Button variant="primary" size="lg" onClick={() => {
             setShowOrderModal(false);
             navigate('/dashboard');
@@ -681,52 +709,33 @@ const OrdersPage: React.FC = () => {
           </Button>
         </Modal.Footer>
       </Modal>
+
+      {/* Failure Modal */}
+      <Modal show={showFailureModal} onHide={() => setShowFailureModal(false)} centered>
+        <Modal.Header closeButton className="bg-danger text-white">
+          <Modal.Title className="fw-bold">❌ Order Failed</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <BootstrapAlert variant="danger" className="mb-0">
+            <strong>Order submission failed!</strong>
+            <p className="mb-0 mt-2">{error}</p>
+            <p className="mb-0 mt-2 small">Please check your information and try again.</p>
+          </BootstrapAlert>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowFailureModal(false)}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={() => {
+            setShowFailureModal(false);
+            setError(null);
+          }}>
+            Try Again
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Container>
   );
 };
 
 export default OrdersPage;
-
-export const compressImage = (file: File): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-    const reader = new FileReader();
-
-    reader.readAsDataURL(file);
-    reader.onload = (e) => {
-      img.src = e.target?.result as string;
-    };
-
-    reader.onerror = (err) => {
-      reject(err);
-    };
-
-    img.onload = () => {
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
-
-      let width = img.width;
-      let height = img.height;
-
-      // Resize based on width
-      if (width > 1080) {
-        height = (1080 / width) * height;
-        width = 1080;
-      }
-
-      canvas.width = width;
-      canvas.height = height;
-
-      ctx?.drawImage(img, 0, 0, width, height);
-
-      // Compress to JPEG
-      const compressedBase64 = canvas.toDataURL("image/jpeg", 0.7);
-
-      resolve(compressedBase64);
-    };
-
-    img.onerror = (err) => {
-      reject(err);
-    };
-  });
-};

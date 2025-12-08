@@ -84,7 +84,8 @@ export interface PagedResponse<T> {
   number: number;
 }
 
-export interface CreateOrderRequest {
+// Legacy single-product order type (deprecated - use unified CreateOrderRequest)
+export interface LegacyCreateOrderRequest {
   buyerId?: number;
   sellerId?: number;
   productId: number;
@@ -126,3 +127,49 @@ export interface CartContextType {
   getCartItemCount: () => number;
   clearCart: () => void;
 }
+
+// Unified Order Types (for both single and multi-item orders)
+export interface OrderItem {
+  productId: number;
+  quantity: number;
+  price: number;
+  sellerId: number | null;
+}
+
+export interface CreateOrderRequest {
+  buyerId?: number;
+  items: OrderItem[];
+  totalAmount: number;
+  paymentProofUrl: string;
+  deliveryAddress: string;
+  deliveryPhone: string;
+  deliveryName: string;
+  deliveryEmail: string;
+  affiliateCode: string | null;
+}
+
+export interface OrderResponse {
+  orderId: number;
+  buyerId: number;
+  totalAmount: number;
+  status: string;
+  items: Array<{
+    productId: number;
+    quantity: number;
+    price: number;
+    sellerId: number | null;
+    orderId: number;
+  }>;
+  deliveryAddress: string;
+  deliveryPhone: string;
+  deliveryName: string;
+  deliveryEmail: string;
+  paymentProofUrl: string | null;
+  affiliateCode: string | null;
+  createdAt: string;
+}
+
+// Legacy types for backward compatibility (deprecated - use CreateOrderRequest instead)
+export interface CreateCartOrderRequest extends CreateOrderRequest {}
+export interface CartOrderResponse extends OrderResponse {}
+export interface CartOrderItem extends OrderItem {}

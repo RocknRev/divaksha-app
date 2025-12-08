@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Table, Container, Pagination } from "react-bootstrap";
 import { saleService } from "../../api/saleService";
+import { useAuth } from "../../context/AuthContext";
 import Loader from "../../components/Loader/Loader";
 import Alert from "../../components/Alert/Alert";
 import { Input } from "../../components/UI/input";
@@ -14,6 +15,7 @@ import "./SalesList.css";
 import { Sale } from "../../types";
 
 const SalesList: React.FC = () => {
+  const { currentUser } = useAuth();
   const [sales, setSales] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -29,14 +31,16 @@ const SalesList: React.FC = () => {
 
   useEffect(() => {
     loadSales();
-  }, [currentPage]);
+  }, [currentPage, currentUser]);
 
   const loadSales = async () => {
     try {
       setLoading(true);
       setError(null);
 
-      const response = await saleService.listSales(currentPage, pageSize);
+      // Pass currentUser.id as sellerId to filter sales
+      const sellerId = currentUser?.id;
+      const response = await saleService.listSales(currentPage, pageSize, sellerId);
       setSales(response.content || []);
       setTotalPages(response.totalPages || 0);
 

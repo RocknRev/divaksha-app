@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { Container, Row, Col, Card, Form, Button, Alert as BootstrapAlert } from 'react-bootstrap';
 import Alert from '../../components/Alert/Alert';
+import { contactService } from '../../api/contactService';
 import './ContactUs.css';
 
 interface ContactFormData {
@@ -95,16 +96,12 @@ const ContactUs: React.FC = () => {
       setIsSubmitting(true);
 
       try {
-        // Simulate API call - in production, this would call your backend
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-
-        // Log form data to console as requested
-        console.log('Contact Form Submission:', {
-          name: formData.name,
-          email: formData.email,
-          subject: formData.subject,
-          message: formData.message,
-          timestamp: new Date().toISOString(),
+        // Submit to API
+        await contactService.sendQuery({
+          name: formData.name.trim(),
+          email: formData.email.trim(),
+          subject: formData.subject.trim(),
+          message: formData.message.trim(),
         });
 
         // Show success message
@@ -117,7 +114,7 @@ const ContactUs: React.FC = () => {
           setShowSuccess(false);
         }, 5000);
       } catch (err) {
-        setError('Failed to send message. Please try again later.');
+        setError(err instanceof Error ? err.message : 'Failed to send message. Please try again later.');
       } finally {
         setIsSubmitting(false);
       }
