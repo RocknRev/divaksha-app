@@ -702,7 +702,7 @@ const Cart: React.FC = () => {
               <Card className="mb-4 border-0 shadow-sm modern-card">
                 <Card.Body className="text-center">
                   <h6 className="fw-bold mb-3">Pay via UPI</h6>
-                  <div className="mb-3">
+                  <div className="mb-3" style={{justifySelf: 'center'}}>
                     <QRCodeSVG value={upiUri} size={200} />
                   </div>
                   <div className="mb-3">

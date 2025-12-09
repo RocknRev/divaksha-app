@@ -529,7 +529,7 @@ const OrdersPage: React.FC = () => {
                   <Col md={6} className="mb-4">
                     <div className="payment-section">
                       <h5 className="fw-bold mb-3">Scan & Pay</h5>
-                      <div className="qr-code-container text-center bg-light p-4 rounded mb-3">
+                      <div className="qr-code-container text-center bg-light p-4 rounded mb-3" style={{justifySelf: 'center'}}>
                         <QRCodeSVG value={upiUri} size={240} />
                       </div>
                       <div className="payment-info p-3 bg-light rounded">

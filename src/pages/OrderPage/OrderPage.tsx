@@ -166,7 +166,7 @@ const OrderPage: React.FC = () => {
               )}
               {product.description && <p className="mb-3">{product.description}</p>}
               <p className="product-price">Price: ₹{product.price.toFixed(2)}</p>
-              <div className="qr-code-container">
+              <div className="qr-code-container" style={{justifySelf: 'center'}}>
                 <QRCodeSVG value={upiUri} size={256} />
               </div>
               <div className="upi-instructions mt-3">
