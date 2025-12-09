@@ -69,19 +69,40 @@ const Cart: React.FC = () => {
     } as DeliveryFormData
   });
 
-  const handleQuantityChange = (productId: number, newQuantity: number) => {
+  const handleQuantityChange = (productId: number, newQuantity: number, stock?: number) => {
+    if (stock !== undefined && stock < 1) {
+      setError("This item is out of stock");
+      return;
+    }
+  
+    if (stock !== undefined && newQuantity > stock) {
+      setError(`Only ${stock} units available`);
+      return;
+    }
+  
     if (newQuantity < 1) {
       removeFromCart(productId);
     } else {
       updateQuantity(productId, newQuantity);
     }
-  };
+  };  
 
   const handleRemoveItem = (productId: number) => {
     removeFromCart(productId);
   };
 
   const handleCheckout = () => {
+    const outOfStockItem = items.find((i) => !i.stock || i.stock < 1);
+    if (outOfStockItem) {
+      setError(`"${outOfStockItem.productName}" is out of stock. Please remove it to continue.`);
+      return;
+    }
+    const stockExceededItem = items.find((i) => i.quantity > (i.stock ?? 0));
+    if (stockExceededItem) {
+      setError(`Only ${stockExceededItem.stock} units available for "${stockExceededItem.productName}".`);
+      return;
+    }
+
     if (items.length === 0) {
       setError('Your cart is empty. Add some products first!');
       return;
@@ -325,70 +346,118 @@ const Cart: React.FC = () => {
                     <tr>
                       <th style={{ width: '100px' }}>Image</th>
                       <th>Product</th>
-                      <th style={{ width: '120px' }}>Price</th>
+                      <th style={{ width: '100px' }}>Price</th>
                       <th style={{ width: '150px' }}>Quantity</th>
                       <th style={{ width: '120px' }}>Subtotal</th>
+                      <th style={{ width: '80px' }}>Stock</th>
                       <th style={{ width: '80px' }}>Action</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {items.map((item) => (
-                      <tr key={item.productId}>
-                        <td>
-                          <img
-                            src={item.imageUrl || 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=100&h=100&fit=crop'}
-                            alt={item.productName}
-                            className="cart-item-image"
-                            onError={(e) => {
-                              (e.target as HTMLImageElement).src =
-                                'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=100&h=100&fit=crop';
-                            }}
-                          />
-                        </td>
-                        <td>
-                          <div className="cart-item-name">{item.productName}</div>
-                        </td>
-                        <td>
-                          <div className="cart-item-price">₹{item.price.toFixed(2)}</div>
-                        </td>
-                        <td>
-                          <div className="quantity-controls">
+                    {items.map((item) => {
+                      if (item.stock !== undefined && item.quantity > item.stock) {
+                        updateQuantity(item.productId, item.stock);
+                        setError(`Stock updated for "${item.productName}". Quantity adjusted.`);
+                      }
+
+                      const isOutOfStock = item.stock < 1;
+                      const isLowStock = !isOutOfStock && item.stock < 5;
+
+                      return (
+                        <tr key={item.productId}>
+                          <td>
+                            <img
+                              src={item.imageUrl || '/images/Tycon-G-1-Prash.png'}
+                              alt={item.productName}
+                              className="cart-item-image"
+                              onError={(e) => {
+                                (e.target as HTMLImageElement).src = '/images/Tycon-G-1-Prash.png';
+                              }}
+                            />
+                          </td>
+
+                          <td>
+                            <div className="cart-item-name">{item.productName}</div>
+
+                            {/* STOCK LABELS */}
+                            {isOutOfStock ? (
+                              <Badge bg="danger" className="mt-1">Out of Stock</Badge>
+                            ) : isLowStock ? (
+                              <Badge bg="warning" className="mt-1 text-dark">Only {item.stock} left</Badge>
+                            ) : (
+                              <Badge bg="success" className="mt-1">In Stock</Badge>
+                            )}
+                          </td>
+
+                          <td>
+                            <div className="cart-item-price">₹{item.price.toFixed(2)}</div>
+                          </td>
+
+                          <td>
+                            <div className="quantity-controls d-flex align-items-center gap-2">
+
+                              {/* Quantity number */}
+                              <div className="quantity-value-box px-3 py-1 border rounded fw-bold">
+                                {item.quantity}
+                              </div>
+
+                              {/* Up/Down buttons (vertical) */}
+                              <div className="d-flex flex-column">
+                                <Button
+                                  variant="outline-secondary"
+                                  size="sm"
+                                  disabled={isOutOfStock || item.quantity >= item.stock}
+                                  onClick={() =>
+                                    handleQuantityChange(item.productId, item.quantity + 1, item.stock)
+                                  }
+                                  className="quantity-arrow-btn p-0"
+                                  style={{ width: "18px", height: "14px", lineHeight: "10px" }}
+                                >
+                                  ▲
+                                </Button>
+
+                                <Button
+                                  variant="outline-secondary"
+                                  size="sm"
+                                  disabled={isOutOfStock}
+                                  onClick={() =>
+                                    handleQuantityChange(item.productId, item.quantity - 1, item.stock)
+                                  }
+                                  className="quantity-arrow-btn p-0 mt-1"
+                                  style={{ width: "18px", height: "14px", lineHeight: "2px" }}
+                                >
+                                  ▼
+                                </Button>
+                              </div>
+
+                            </div>
+                          </td>
+
+                          <td>
+                            <div className="cart-item-subtotal fw-bold">
+                              ₹{(item.price * item.quantity).toFixed(2)}
+                            </div>
+                          </td>
+
+                          <td>
+                            <div className="">
+                              {item.stock}
+                            </div>
+                          </td>
+                          
+                          <td>
                             <Button
-                              variant="outline-secondary"
+                              variant="outline-danger"
                               size="sm"
-                              onClick={() => handleQuantityChange(item.productId, item.quantity - 1)}
-                              className="quantity-btn"
+                              onClick={() => handleRemoveItem(item.productId)}
+                              className="remove-btn"
                             >
-                              −
+                              🗑️
                             </Button>
-                            <span className="quantity-value">{item.quantity}</span>
-                            <Button
-                              variant="outline-secondary"
-                              size="sm"
-                              onClick={() => handleQuantityChange(item.productId, item.quantity + 1)}
-                              className="quantity-btn"
-                            >
-                              +
-                            </Button>
-                          </div>
-                        </td>
-                        <td>
-                          <div className="cart-item-subtotal fw-bold">
-                            ₹{(item.price * item.quantity).toFixed(2)}
-                          </div>
-                        </td>
-                        <td>
-                          <Button
-                            variant="outline-danger"
-                            size="sm"
-                            onClick={() => handleRemoveItem(item.productId)}
-                            className="remove-btn"
-                          >
-                            🗑️
-                          </Button>
-                        </td>
-                      </tr>
-                    ))}
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </Table>
               </Card.Body>

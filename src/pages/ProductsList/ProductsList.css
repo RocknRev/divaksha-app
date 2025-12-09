@@ -142,3 +142,15 @@
     height: 220px;
   }
 }
+
+/* optional visual polish */
+.card img.object-cover { transition: transform .3s ease; }
+.card:hover img.object-cover { transform: scale(1.03); }
+
+.shadow-soft { box-shadow: 0 6px 18px rgba(20,20,30,0.06); }
+
+.group-hover\:scale-105:hover img { transform: scale(1.05); }
+
+@media (max-width: 640px) {
+  .h-48 { height: 12rem; }
+}

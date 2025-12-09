@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Container, Card, Form, Button, Row, Col } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
 import { authService } from '../../api/authService';
 import { User } from '../../types';
 import { useAuth } from '../../context/AuthContext';
 import { authUtils } from '../../utils/auth';
 import Alert from '../../components/Alert/Alert';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/UI/card';
+import { Input } from '../../components/UI/input';
+import { Button } from '../../components/UI/button';
+import { Label } from '../../components/UI/label';
+import { toast } from 'sonner';
 import './Login.css';
 
 interface LoginFormData {
@@ -40,6 +44,10 @@ const Login: React.FC = () => {
         password: data.password,
       });
 
+      if (response.verifyStatus === "INVALID") {
+        setError("Invalid email id or password.");
+        return;
+      }
       // Store token
       authUtils.setToken(response.token);
 
@@ -64,98 +72,81 @@ const Login: React.FC = () => {
   };
 
   return (
-    <Container className="login-container">
-      <Row className="justify-content-center align-items-center min-vh-100">
-        <Col md={6} lg={5} xl={4}>
-          <div className="login-header text-center mb-4">
-            <h2 className="display-5 fw-bold">Welcome Back</h2>
-            <p className="text-muted">Sign in to your Divaksha account</p>
-          </div>
+    <div className="bg-background min-h-screen flex items-center">
+      <div className="mx-auto w-full max-w-md px-4 py-10">
+        <div className="text-center mb-6 space-y-2">
+          <h2 className="text-3xl font-bold text-text-primary">Welcome Back</h2>
+          <p className="text-text-secondary text-sm">Sign in to your Divaksha account</p>
+        </div>
 
-          {error && <Alert variant="danger" message={error} onClose={() => setError(null)} />}
+        {error && <Alert variant="danger" message={error} onClose={() => setError(null)} />}
 
-          <Card className="shadow-lg border-0">
-            <Card.Body className="p-4">
-              <Form onSubmit={handleSubmit(onSubmit)}>
-                <Form.Group className="mb-3">
-                  <Form.Label className="fw-semibold">
-                    Email Address <span className="text-danger">*</span>
-                  </Form.Label>
-                  <Form.Control
-                    type="email"
-                    size="lg"
-                    {...register('email', {
-                      required: 'Email is required',
-                      pattern: {
-                        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                        message: 'Invalid email address',
-                      },
-                    })}
-                    placeholder="your.email@example.com"
-                    isInvalid={!!errors.email}
-                    className="form-control-lg"
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {errors.email?.message}
-                  </Form.Control.Feedback>
-                </Form.Group>
+        <Card className="shadow-soft">
+          <CardHeader className="pb-2">
+            <CardTitle>Sign In</CardTitle>
+            <CardDescription>Use your email and password to access your account.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4 pt-2">
+            <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
+              <div className="space-y-2">
+                <Label>
+                  Email Address <span className="text-danger">*</span>
+                </Label>
+                <Input
+                  type="email"
+                  {...register('email', {
+                    required: 'Email is required',
+                    pattern: {
+                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                      message: 'Invalid email address',
+                    },
+                  })}
+                  placeholder="your.email@example.com"
+                  aria-invalid={!!errors.email}
+                />
+                {errors.email && <p className="text-xs text-danger">{errors.email.message}</p>}
+              </div>
 
-                <Form.Group className="mb-4">
-                  <Form.Label className="fw-semibold">
-                    Password <span className="text-danger">*</span>
-                  </Form.Label>
-                  <Form.Control
-                    type="password"
-                    size="lg"
-                    {...register('password', {
-                      required: 'Password is required',
-                      minLength: {
-                        value: 6,
-                        message: 'Password must be at least 6 characters',
-                      },
-                    })}
-                    placeholder="Enter your password"
-                    isInvalid={!!errors.password}
-                    className="form-control-lg"
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {errors.password?.message}
-                  </Form.Control.Feedback>
-                </Form.Group>
+              <div className="space-y-2">
+                <Label>
+                  Password <span className="text-danger">*</span>
+                </Label>
+                <Input
+                  type="password"
+                  {...register('password', {
+                    required: 'Password is required',
+                    minLength: {
+                      value: 6,
+                      message: 'Password must be at least 6 characters',
+                    },
+                  })}
+                  placeholder="Enter your password"
+                  aria-invalid={!!errors.password}
+                />
+                {errors.password && <p className="text-xs text-danger">{errors.password.message}</p>}
+              </div>
 
-                <div className="d-grid gap-2 mb-3">
-                  <Button variant="primary" size="lg" type="submit" disabled={loading}>
-                    {loading ? (
-                      <>
-                        <span className="spinner-border spinner-border-sm me-2" />
-                        Signing in...
-                      </>
-                    ) : (
-                      '🔐 Sign In'
-                    )}
-                  </Button>
-                </div>
+              <Button type="submit" disabled={loading} className="w-full h-11">
+                {loading ? 'Signing in...' : '🔐 Sign In'}
+              </Button>
+            </form>
 
-                <div className="text-center">
-                  <p className="text-muted mb-0">
-                    Don't have an account?{' '}
-                    <Link to="/register" className="text-decoration-none fw-semibold">
-                      Register here
-                    </Link>
-                  </p>
-                </div>
-              </Form>
-            </Card.Body>
-          </Card>
+            <div className="text-center text-sm text-text-secondary">
+              Don&apos;t have an account?{' '}
+              <Link to="/register" className="text-primary hover:text-primary-hover font-semibold">
+                Register here
+              </Link>
+            </div>
+          </CardContent>
+        </Card>
 
-          <div className="text-center mt-4">
-            <Link to="/" className="text-decoration-none text-muted">
-              ← Back to Home
-            </Link>
-          </div>
-        </Col>
-      </Row>
-    </Container>
+        <div className="text-center mt-4">
+          <Link to="/" className="text-sm text-text-secondary hover:text-primary">
+            ← Back to Home
+          </Link>
+        </div>
+      </div>
+    </div>
   );
 };
 

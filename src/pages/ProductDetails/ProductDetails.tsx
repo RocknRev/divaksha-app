@@ -1,6 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Container, Row, Col, Card, Button, Badge, Alert as BootstrapAlert } from 'react-bootstrap';
+import {
+  Container,
+  Row,
+  Col,
+  Card,
+  Button,
+  Badge,
+  Accordion,
+  ListGroup,
+  Tabs,
+  Tab,
+  Carousel,
+  Alert as BootstrapAlert,
+} from 'react-bootstrap';
 import { productService } from '../../api/productService';
 import { Product } from '../../types';
 import { useCart } from '../../context/CartContext';
@@ -16,14 +29,18 @@ const ProductDetails: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
   const { addToCart } = useCart();
-
+  var isOutOfStock=false;
   useEffect(() => {
     if (productId) {
       loadProduct();
+      
+      if(product)
+      isOutOfStock = product.stock < 1;
     } else {
       setError('Product ID is required');
       setLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [productId]);
 
   const loadProduct = async () => {
@@ -77,217 +94,409 @@ const ProductDetails: React.FC = () => {
     );
   }
 
-  // Dummy content for health supplement powder
-  const productFeatures = [
-    '100% Natural Ingredients',
-    'Rich in Essential Vitamins & Minerals',
-    'Supports Overall Health & Wellness',
-    'Easy to Mix & Consume',
-    'GMP Certified Manufacturing',
-    'No Artificial Preservatives',
+  // --- G1 Prash content (extracted and structured) ---
+  const overviewText = [
+    "Tycon’s G1 Prash is a handcrafted nutraceutical formulated with 43–50 plant-derived herbal ingredients. It focuses on addressing root causes to support overall wellness and systemic balance. The product combines traditional herbal knowledge with modern micro-clustering technology for improved absorption.",
   ];
 
-  const productBenefits = [
+  const highlights = [
+    "Handmade formulation with plant-derived ingredients",
+    "Micro-Clustering technology for better absorption",
+    "Unique extraction methods",
+    "Formulated blends for heart, liver, kidney, brain, reproductive and immune support",
+    "No side effects",
+  ];
+
+  const benefitCards = [
     {
-      icon: '💪',
-      title: 'Boosts Energy',
-      description: 'Natural ingredients that help increase daily energy levels',
-    },
-    {
-      icon: '🛡️',
-      title: 'Immune Support',
-      description: 'Strengthens your immune system with essential nutrients',
+      icon: '💚',
+      title: 'Heart Health',
+      body: [
+        'Supports circulation and cardiac muscle strength',
+        'Helps balance cholesterol and reduce oxidative stress',
+      ],
     },
     {
       icon: '🧠',
-      title: 'Mental Clarity',
-      description: 'Supports cognitive function and mental alertness',
+      title: 'Brain & Cognition',
+      body: [
+        'Improves focus and memory support',
+        'Provides antioxidant nourishment for brain cells',
+      ],
+    },
+    {
+      icon: '🛡️',
+      title: 'Immunity & Detox',
+      body: [
+        'Rich in antioxidants to support immune response',
+        'Supports liver and kidney detoxification',
+      ],
     },
     {
       icon: '❤️',
-      title: 'Heart Health',
-      description: 'Promotes cardiovascular wellness',
+      title: 'Sexual & Reproductive Health',
+      body: [
+        'Supports stamina, hormonal balance and reproductive function',
+        'Contains traditional herbs used for sexual wellness',
+      ],
     },
   ];
 
+  const ingredientBlends: { title: string; items: string[] }[] = [
+    {
+      title: 'Cardiac Care Blend',
+      items: ['Arjun Chhal', 'Dal Chini', 'Green Elaichi', 'Kaknasha', 'Akarkara'],
+    },
+    {
+      title: 'Brain Stimulating Blend',
+      items: ['Ashwagandha', 'Badam', 'Pista', 'Pumpkin Seed', 'Khajur', 'Kaunch Beej', 'Brahmi'],
+    },
+    {
+      title: 'Liver Tonic Blend',
+      items: ['Kalmegh', 'Nagar Motha', 'Bhumi Amla', 'Raisin', 'Draksha', 'Bilva', 'Kasni', 'Kutki'],
+    },
+    {
+      title: 'Kidney Health Blend',
+      items: ['Gokhru', 'Punarnava', 'Mandukpami', 'Misri Syrup', 'Lavang', 'Beej Band'],
+    },
+    {
+      title: 'Sexual Wellness Blend',
+      items: [
+        'Korean Red Ginseng',
+        'Vidarikand',
+        'Nag Kesar',
+        'Safed Musli',
+        'Shatavari',
+        'Javitri',
+        'Kakoli',
+        'Talmakhana',
+      ],
+    },
+    {
+      title: 'Holistic Wellness / Immunity Ingredients',
+      items: [
+        'Giloy',
+        'Pippali',
+        'Dhawda Gond',
+        'Shyonak',
+        'Magaz-e-Nariyal',
+        'Wild Honey',
+        'Black Pepper',
+        'Nano-technology applied gold granules',
+      ],
+    },
+  ];
+
+  const bodySystems = [
+    'Digestive System',
+    'Circulatory System',
+    'Nervous System',
+    'Endocrine System',
+    'Respiratory System',
+    'Immune System',
+    'Skeletal System',
+    'Muscular System',
+    'Lymphatic System',
+    'Urinary System',
+    'Reproductive System',
+  ];
+
+  const dosageNotes = [
+    {
+      title: 'For Men',
+      text: '1 full tablespoon (approx. 8–10 g) per day (e.g. 5 g morning and 5 g night).',
+    },
+    {
+      title: 'For Women',
+      text: '½ tablespoon (approx. 5 g) per day (2.5 g morning and 2.5 g night).',
+    },
+    {
+      title: 'Not recommended for',
+      text: 'Patients on dialysis, pregnant women, breastfeeding mothers, and women during menstrual periods.',
+    },
+    {
+      title: 'General Guidance',
+      text: 'If acidity increases initially, it may settle when body pH balances. Drink at least 3 L of water daily and include light exercise (15–20 min walking) for best results.',
+    },
+  ];
+
+  const faqs = [
+    {
+      q: 'Are ingredients plant-based?',
+      a: 'Yes. All ingredients are plant-origin/derived only.',
+    },
+    {
+      q: 'Does it have side effects?',
+      a: 'No side effects. Users with specific medical conditions should consult a healthcare professional.',
+    },
+    {
+      q: 'How to consume?',
+      a: 'Follow the dosage guidance: mix in water/juice or take directly as guided. See Dosage tab for details.',
+    },
+  ];
+
+  // carousel images
+  const carouselImages: string[] =
+    ['/images/Tycon-G-1-Prash.png'];
+
   return (
     <Container className="product-details-container py-5">
-      <Row>
-        <Col lg={6} className="mb-4">
-          <Card className="product-image-card shadow-lg border-0">
-            <div className="product-image-wrapper-large">
-              <img
-                src={product.imageUrl || 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&h=800&fit=crop'}
-                alt={product.name}
-                className="product-detail-image"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src =
-                    'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&h=800&fit=crop';
-                }}
-              />
-            </div>
+      {/* Hero top: image carousel + purchase card */}
+      <Row className="gy-4 align-items-center">
+        <Col lg={7}>
+          <Card className="border-0 shadow-sm">
+            <Carousel variant="dark" indicators={carouselImages.length > 1} interval={4000}>
+              {carouselImages.map((src, i) => (
+                <Carousel.Item key={i}>
+                  <div className="d-flex justify-content-center align-items-center p-4" style={{ minHeight: 360 }}>
+                    <img
+                      src={src}
+                      alt={`${product.name} ${i + 1}`}
+                      className="img-fluid product-detail-carousel-image"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src =
+                          '/images/Tycon-G-1-Prash.png';
+                      }}
+                      style={{ maxHeight: 420, objectFit: 'contain' }}
+                    />
+                  </div>
+                </Carousel.Item>
+              ))}
+            </Carousel>
           </Card>
         </Col>
 
-        <Col lg={6}>
-          <div className="product-info-section">
+        <Col lg={5}>
+          <Card className="p-4 shadow-sm sticky-card border-0">
+            <div className="d-flex align-items-start justify-content-between mb-2">
+              <div>
+                {isOutOfStock ? (
+                  <Badge bg="danger">Out of Stock</Badge>
+                ) : (
+                  <Badge bg="success">In Stock</Badge>
+                )}
+              </div>
+              <div className="text-end">
+                <small className="text-muted">SKU: {product.sku || '—'}</small>
+              </div>
+            </div>
+
+            <h2 className="product-title mb-2">{product.name}</h2>
             <div className="mb-3">
-              <Badge bg="success" className="mb-2">
-                In Stock
-              </Badge>
+              <span className="product-price h3 fw-bold">₹{product.price.toFixed(2)}</span>
+              <div className="text-muted small">per unit</div>
             </div>
-            <h1 className="product-title mb-3">{product.name}</h1>
-            <div className="product-price-section mb-4">
-              <span className="product-price-large">₹{product.price.toFixed(2)}</span>
-              <span className="text-muted ms-2">per unit</span>
+            <div className={`fw-semibold mt-1 ${isOutOfStock ? "text-danger" : "text-success"}`}>
+              {isOutOfStock ? "Currently Unavailable" : `Available Stock: ${product.stock}`}
             </div>
 
-            {product.description && (
-              <div className="product-description mb-4">
-                <p className="lead">{product.description}</p>
-              </div>
-            )}
 
-            {/* Extended Description */}
-            <div className="product-extended-description mb-4">
-              <h5 className="fw-bold mb-3">About This Product</h5>
-              <p className="text-muted">
-                Our premium health supplement powder is carefully formulated with a blend of natural ingredients
-                designed to support your overall wellness journey. This comprehensive nutritional supplement provides
-                essential vitamins, minerals, and antioxidants that your body needs to function at its best.
-              </p>
-              <p className="text-muted">
-                Whether you're looking to boost your energy levels, support your immune system, or maintain optimal
-                health, this supplement powder is an excellent addition to your daily routine. Simply mix with water,
-                juice, or your favorite smoothie for a convenient and delicious way to nourish your body.
-              </p>
-            </div>
+            {/* Short description */}
+            {product.description && <p className="text-muted mb-3">{product.description}</p>}
 
-            {/* Key Features */}
-            <div className="product-features mb-4">
-              <h5 className="fw-bold mb-3">Key Features</h5>
-              <ul className="feature-list">
-                {productFeatures.map((feature, index) => (
-                  <li key={index} className="mb-2">
-                    <span className="text-success me-2">✓</span>
-                    {feature}
-                  </li>
-                ))}
-              </ul>
-            </div>
+            {/* Quantity and actions */}
+            <Row className="align-items-center gy-2">
+              <Col xs="auto">
+                <div className="d-flex align-items-center border rounded-3 px-2 py-1">
+                  <Button
+                    variant="light"
+                    size="sm"
+                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                    disabled={quantity <= 1 || isOutOfStock}
+                  >
+                    −
+                  </Button>
+                  <div className="px-3 mx-2 fw-bold fs-5">{quantity}</div>
+                  <Button variant="light" size="sm" onClick={() => setQuantity(quantity + 1)} disabled={isOutOfStock || quantity >= product.stock}>
+                    +
+                  </Button>
+                </div>
+              </Col>
+              <Col>
+                <div className="text-muted small">Subtotal</div>
+                <div className="fw-bold">₹{(product.price * quantity).toFixed(2)}</div>
+              </Col>
+            </Row>
 
-            {/* Quantity Selector */}
-            <div className="product-quantity mb-4">
-              <label className="fw-semibold mb-2 d-block">Quantity</label>
-              <div className="d-flex align-items-center gap-3">
-                <Button
-                  variant="outline-secondary"
-                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  disabled={quantity <= 1}
-                >
-                  −
-                </Button>
-                <span className="quantity-display fw-bold fs-5">{quantity}</span>
-                <Button variant="outline-secondary" onClick={() => setQuantity(quantity + 1)}>
-                  +
-                </Button>
-                <span className="ms-auto text-muted">
-                  Subtotal: <strong className="text-primary">₹{(product.price * quantity).toFixed(2)}</strong>
-                </span>
-              </div>
-            </div>
-
-            {/* Buy Now and Add to Cart Buttons */}
-            <div className="product-actions">
-              <div className="d-grid gap-2 mb-3">
-                <Button
-                  variant="outline-primary"
-                  size="lg"
-                  className="fw-bold py-3"
-                  onClick={handleAddToCart}
-                >
-                  ➕ Add to Cart
-                </Button>
-                <Button
-                  variant="primary"
-                  size="lg"
-                  className="fw-bold py-3"
-                  onClick={handleBuyNow}
-                >
-                  🛒 Buy Now - ₹{(product.price * quantity).toFixed(2)}
-                </Button>
-              </div>
-              <Button
-                variant="outline-secondary"
-                size="lg"
-                className="w-100"
-                onClick={() => navigate('/products')}
-              >
+            <div className="mt-4">
+              <Button variant="primary" size="lg" className="w-100 mb-2" onClick={handleBuyNow} disabled={isOutOfStock}>
+                🛒 Buy Now - ₹{(product.price * quantity).toFixed(2)}
+              </Button>
+              <Button variant="outline-primary" size="lg" className="w-100 mb-2" onClick={handleAddToCart} disabled={isOutOfStock}>
+                ➕ Add to Cart
+              </Button>
+              <Button variant="light" size="sm" className="w-100" onClick={() => navigate('/products')}>
                 ← Back to Products
               </Button>
             </div>
-          </div>
+
+            <div className="mt-3">
+              <small className="text-muted">
+                For questions about this product, check the FAQ below or contact support.
+              </small>
+            </div>
+          </Card>
         </Col>
       </Row>
 
-      {/* Benefits Section */}
+      {/* Tabs: Overview, Benefits, Ingredients, Body Systems, Dosage, Safety, FAQ */}
       <Row className="mt-5">
         <Col>
-          <h3 className="text-center fw-bold mb-4">Health Benefits</h3>
-          <Row>
-            {productBenefits.map((benefit, index) => (
-              <Col key={index} md={6} lg={3} className="mb-4">
-                <Card className="h-100 benefit-card border-0 shadow-sm">
-                  <Card.Body className="text-center">
-                    <div className="benefit-icon mb-3">{benefit.icon}</div>
-                    <h6 className="fw-bold">{benefit.title}</h6>
-                    <p className="text-muted small mb-0">{benefit.description}</p>
-                  </Card.Body>
-                </Card>
-              </Col>
-            ))}
-          </Row>
-        </Col>
-      </Row>
-
-      {/* Usage Instructions */}
-      <Row className="mt-5">
-        <Col lg={8} className="mx-auto">
-          <Card className="usage-card border-0 shadow-sm">
+          <Card className="border-0 shadow-sm">
             <Card.Body>
-              <h5 className="fw-bold mb-3">📋 How to Use</h5>
-              <ol className="mb-0">
-                <li className="mb-2">
-                  Mix one scoop (approximately 10g) with 200ml of water, juice, or your favorite beverage
-                </li>
-                <li className="mb-2">Stir well until completely dissolved</li>
-                <li className="mb-2">Consume once daily, preferably in the morning with breakfast</li>
-                <li className="mb-2">For best results, maintain a balanced diet and regular exercise routine</li>
-                <li>Store in a cool, dry place away from direct sunlight</li>
-              </ol>
+              <Tabs defaultActiveKey="overview" id="product-details-tabs" className="mb-3">
+                <Tab eventKey="overview" title="Overview">
+                  <h4 className="fw-bold">{product.name}</h4>
+                  {overviewText.map((t, idx) => (
+                    <p className="text-muted" key={idx}>
+                      {t}
+                    </p>
+                  ))}
+
+                  <h6 className="fw-semibold mt-3">Highlights</h6>
+                  <ListGroup horizontal className="flex-wrap">
+                    {highlights.map((h, i) => (
+                      <ListGroup.Item key={i} className="border-0 pe-3">
+                        <Badge bg="info" className="me-2">
+                          ✓
+                        </Badge>
+                        {h}
+                      </ListGroup.Item>
+                    ))}
+                  </ListGroup>
+                </Tab>
+
+                <Tab eventKey="benefits" title="Key Benefits">
+                  <Row className="gy-3">
+                    {benefitCards.map((b, i) => (
+                      <Col md={6} lg={3} key={i}>
+                        <Card className="h-100 border-0 shadow-sm">
+                          <Card.Body className="d-flex flex-column">
+                            <div className="display-6 mb-2">{b.icon}</div>
+                            <h6 className="fw-bold">{b.title}</h6>
+                            <ul className="mt-2 mb-0 ps-3">
+                              {b.body.map((line, idx) => (
+                                <li key={idx} className="text-muted small">
+                                  {line}
+                                </li>
+                              ))}
+                            </ul>
+                          </Card.Body>
+                        </Card>
+                      </Col>
+                    ))}
+                  </Row>
+                </Tab>
+
+                <Tab eventKey="ingredients" title="Ingredients">
+                  <p className="text-muted">
+                    The formulation contains several proprietary blends; below are the main named blends and their
+                    representative ingredients.
+                  </p>
+
+                  <Accordion defaultActiveKey="0">
+                    {ingredientBlends.map((blend, i) => (
+                      <Accordion.Item eventKey={String(i)} key={i}>
+                        <Accordion.Header>{blend.title}</Accordion.Header>
+                        <Accordion.Body>
+                          <ListGroup variant="flush">
+                            {blend.items.map((ing, idx) => (
+                              <ListGroup.Item key={idx} className="ps-0">
+                                {ing}
+                              </ListGroup.Item>
+                            ))}
+                          </ListGroup>
+                        </Accordion.Body>
+                      </Accordion.Item>
+                    ))}
+                  </Accordion>
+                </Tab>
+
+                <Tab eventKey="systems" title="Body Systems">
+                  <p className="text-muted mb-3">
+                    This product support across multiple body systems:
+                  </p>
+                  <Row>
+                    {bodySystems.map((s, i) => (
+                      <Col md={4} lg={3} key={i} className="mb-2">
+                        <Badge bg="secondary" className="me-2">
+                          {i + 1}
+                        </Badge>
+                        <span className="text-muted">{s}</span>
+                      </Col>
+                    ))}
+                  </Row>
+                </Tab>
+
+                <Tab eventKey="dosage" title="Dosage & Usage">
+                  <h6 className="fw-bold">Dosage</h6>
+                  <ListGroup className="mb-3">
+                    {dosageNotes.map((d, i) => (
+                      <ListGroup.Item key={i}>
+                        <strong>{d.title}:</strong> <span className="ms-2">{d.text}</span>
+                      </ListGroup.Item>
+                    ))}
+                  </ListGroup>
+
+                  <h6 className="fw-bold">How to Use</h6>
+                  <ol>
+                    <li className="text-muted">Take the recommended quantity (see Dosage) daily.</li>
+                    <li className="text-muted">Mix into water, juice, or take as directed.</li>
+                    <li className="text-muted">Maintain hydration (min. 3 L water daily) and light exercise for best results.</li>
+                    <li className="text-muted">Store in a cool, dry place away from direct sunlight.</li>
+                  </ol>
+                </Tab>
+
+                <Tab eventKey="safety" title="Safety & Restrictions">
+                  <BootstrapAlert variant="info">
+                    <strong>Important:</strong> Not recommended for dialysis patients, pregnant or breastfeeding women,
+                    or women during menstrual periods. Consult a healthcare professional if in doubt.
+                  </BootstrapAlert>
+
+                  <h6 className="mt-3">Notes</h6>
+                  <p className="text-muted">
+                    Ingredients are plant-origin/derived. The product has no side effects, but
+                    individual responses may vary. If acidity increases initially, it may settle as body pH balances. If
+                    necessary, take an antacid and consult your physician.
+                  </p>
+                </Tab>
+
+                <Tab eventKey="faq" title="FAQ">
+                  <Accordion>
+                    {faqs.map((f, i) => (
+                      <Accordion.Item eventKey={String(i)} key={i}>
+                        <Accordion.Header>{f.q}</Accordion.Header>
+                        <Accordion.Body className="text-muted">{f.a}</Accordion.Body>
+                      </Accordion.Item>
+                    ))}
+                  </Accordion>
+                </Tab>
+              </Tabs>
             </Card.Body>
           </Card>
         </Col>
       </Row>
 
-      {/* Safety Information */}
-      {/* <Row className="mt-4">
-        <Col lg={8} className="mx-auto">
-          <BootstrapAlert variant="info" className="mb-0">
-            <BootstrapAlert.Heading className="h6 fw-bold">
-              ⚠️ Important Information
-            </BootstrapAlert.Heading>
-            <p className="mb-0 small">
-              This product is a dietary supplement and should not be used as a substitute for a balanced diet. Consult
-              with a healthcare professional before use if you are pregnant, nursing, or have any medical conditions.
-              Keep out of reach of children.
-            </p>
-          </BootstrapAlert>
+      {/* Footer CTA */}
+      <Row className="mt-4">
+        <Col>
+          <Card className="p-3 border-0 shadow-sm">
+            <Row className="align-items-center">
+              <Col md={8}>
+                <h5 className="mb-1">Ready to purchase?</h5>
+                <div className="text-muted">Choose quantity above and buy securely. Add to cart to continue shopping.</div>
+              </Col>
+              <Col md={4} className="text-md-end mt-3 mt-md-0">
+                <Button variant="primary" onClick={handleBuyNow} disabled={isOutOfStock}>
+                  🛒 Buy Now - ₹{(product.price * quantity).toFixed(2)}
+                </Button>
+              </Col>
+            </Row>
+          </Card>
         </Col>
-      </Row> */}
+      </Row>
     </Container>
   );
 };
 
 export default ProductDetails;
-

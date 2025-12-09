@@ -1,7 +1,11 @@
 import React, { useState, useCallback } from 'react';
-import { Container, Row, Col, Card, Form, Button, Alert as BootstrapAlert } from 'react-bootstrap';
 import Alert from '../../components/Alert/Alert';
 import { contactService } from '../../api/contactService';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../../components/UI/card';
+import { Input } from '../../components/UI/input';
+import { Textarea } from '../../components/UI/textarea';
+import { Button } from '../../components/UI/button';
+import { toast } from 'sonner';
 import './ContactUs.css';
 
 interface ContactFormData {
@@ -28,7 +32,6 @@ const ContactUs: React.FC = () => {
 
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showSuccess, setShowSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const validateEmail = (email: string): boolean => {
@@ -96,7 +99,6 @@ const ContactUs: React.FC = () => {
       setIsSubmitting(true);
 
       try {
-        // Submit to API
         await contactService.sendQuery({
           name: formData.name.trim(),
           email: formData.email.trim(),
@@ -104,17 +106,13 @@ const ContactUs: React.FC = () => {
           message: formData.message.trim(),
         });
 
-        // Show success message
-        setShowSuccess(true);
         setFormData({ name: '', email: '', subject: '', message: '' });
         setErrors({});
-
-        // Hide success message after 5 seconds
-        setTimeout(() => {
-          setShowSuccess(false);
-        }, 5000);
+        toast.success('Message sent successfully! We will get back to you soon.');
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to send message. Please try again later.');
+        const msg = err instanceof Error ? err.message : 'Failed to send message. Please try again later.';
+        setError(msg);
+        toast.error(msg);
       } finally {
         setIsSubmitting(false);
       }
@@ -123,155 +121,120 @@ const ContactUs: React.FC = () => {
   );
 
   return (
-    <Container className="contact-us-container py-5">
-      <Row className="justify-content-center">
-        <Col lg={8}>
-          <div className="text-center mb-5">
-            <h1 className="display-5 fw-bold mb-3">Contact Us</h1>
-            <p className="lead text-muted">
-              Have a question, concern, or feedback? We'd love to hear from you!
-            </p>
-          </div>
+    <div className="bg-background min-h-screen">
+      <div className="mx-auto max-w-4xl px-4 py-10 space-y-8">
+        <div className="text-center space-y-3">
+          <h1 className="text-3xl font-bold text-text-primary">Contact Us</h1>
+          <p className="text-text-secondary text-base">
+            Have a question, concern, or feedback? We'd love to hear from you!
+          </p>
+        </div>
 
-          {error && <Alert variant="danger" message={error} onClose={() => setError(null)} />}
+        {error && <Alert variant="danger" message={error} onClose={() => setError(null)} />}
 
-          {showSuccess && (
-            <BootstrapAlert variant="success" dismissible onClose={() => setShowSuccess(false)}>
-              <BootstrapAlert.Heading>Message Sent Successfully!</BootstrapAlert.Heading>
-              <p className="mb-0">Thank you for contacting us. We'll get back to you as soon as possible.</p>
-            </BootstrapAlert>
-          )}
-
-          <Card className="shadow-lg border-0">
-            <Card.Body className="p-4">
-              <Form onSubmit={handleSubmit}>
-                <Row>
-                  <Col md={6}>
-                    <Form.Group className="mb-3">
-                      <Form.Label className="fw-semibold">
-                        Name <span className="text-danger">*</span>
-                      </Form.Label>
-                      <Form.Control
-                        type="text"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleInputChange}
-                        placeholder="Enter your full name"
-                        isInvalid={!!errors.name}
-                        size="lg"
-                      />
-                      <Form.Control.Feedback type="invalid">{errors.name}</Form.Control.Feedback>
-                    </Form.Group>
-                  </Col>
-
-                  <Col md={6}>
-                    <Form.Group className="mb-3">
-                      <Form.Label className="fw-semibold">
-                        Email <span className="text-danger">*</span>
-                      </Form.Label>
-                      <Form.Control
-                        type="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleInputChange}
-                        placeholder="your.email@example.com"
-                        isInvalid={!!errors.email}
-                        size="lg"
-                      />
-                      <Form.Control.Feedback type="invalid">{errors.email}</Form.Control.Feedback>
-                    </Form.Group>
-                  </Col>
-                </Row>
-
-                <Form.Group className="mb-3">
-                  <Form.Label className="fw-semibold">
-                    Subject <span className="text-danger">*</span>
-                  </Form.Label>
-                  <Form.Control
-                    type="text"
-                    name="subject"
-                    value={formData.subject}
+        <Card className="shadow-soft">
+          <CardHeader>
+            <CardTitle>Send us a message</CardTitle>
+            <CardDescription>We usually respond within one business day.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <form className="space-y-4" onSubmit={handleSubmit}>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-text-secondary">
+                    Name <span className="text-danger">*</span>
+                  </label>
+                  <Input
+                    name="name"
+                    value={formData.name}
                     onChange={handleInputChange}
-                    placeholder="What is this regarding?"
-                    isInvalid={!!errors.subject}
-                    size="lg"
+                    placeholder="Enter your full name"
+                    aria-invalid={!!errors.name}
                   />
-                  <Form.Control.Feedback type="invalid">{errors.subject}</Form.Control.Feedback>
-                </Form.Group>
-
-                <Form.Group className="mb-4">
-                  <Form.Label className="fw-semibold">
-                    Message <span className="text-danger">*</span>
-                  </Form.Label>
-                  <Form.Control
-                    as="textarea"
-                    rows={6}
-                    name="message"
-                    value={formData.message}
-                    onChange={handleInputChange}
-                    placeholder="Please provide details about your inquiry, grievance, or feedback..."
-                    isInvalid={!!errors.message}
-                    style={{ resize: 'vertical' }}
-                  />
-                  <Form.Control.Feedback type="invalid">{errors.message}</Form.Control.Feedback>
-                  <Form.Text className="text-muted">
-                    Minimum 10 characters required. Please provide as much detail as possible.
-                  </Form.Text>
-                </Form.Group>
-
-                <div className="d-grid">
-                  <Button
-                    variant="primary"
-                    type="submit"
-                    size="lg"
-                    disabled={isSubmitting}
-                    className="fw-semibold py-3"
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <span className="spinner-border spinner-border-sm me-2" />
-                        Sending...
-                      </>
-                    ) : (
-                      'Send Message'
-                    )}
-                  </Button>
+                  {errors.name && <p className="text-xs text-danger">{errors.name}</p>}
                 </div>
-              </Form>
-            </Card.Body>
-          </Card>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-text-secondary">
+                    Email <span className="text-danger">*</span>
+                  </label>
+                  <Input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    placeholder="your.email@example.com"
+                    aria-invalid={!!errors.email}
+                  />
+                  {errors.email && <p className="text-xs text-danger">{errors.email}</p>}
+                </div>
+              </div>
 
-          <Card className="mt-4 shadow-sm border-0">
-            <Card.Body>
-              <h5 className="fw-bold mb-3">Other Ways to Reach Us</h5>
-              <Row>
-                <Col md={4} className="mb-3">
-                  <div className="contact-info-item">
-                    <div className="contact-icon mb-2">📧</div>
-                    <strong>Email</strong>
-                    <p className="text-muted mb-0 small">support@divaksha.com</p>
-                  </div>
-                </Col>
-                <Col md={4} className="mb-3">
-                  <div className="contact-info-item">
-                    <div className="contact-icon mb-2">📞</div>
-                    <strong>Phone</strong>
-                    <p className="text-muted mb-0 small">+91 123 456 7890</p>
-                  </div>
-                </Col>
-                <Col md={4} className="mb-3">
-                  <div className="contact-info-item">
-                    <div className="contact-icon mb-2">🕒</div>
-                    <strong>Business Hours</strong>
-                    <p className="text-muted mb-0 small">Mon - Sat: 9 AM - 6 PM</p>
-                  </div>
-                </Col>
-              </Row>
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
-    </Container>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-text-secondary">
+                  Subject <span className="text-danger">*</span>
+                </label>
+                <Input
+                  name="subject"
+                  value={formData.subject}
+                  onChange={handleInputChange}
+                  placeholder="What is this regarding?"
+                  aria-invalid={!!errors.subject}
+                />
+                {errors.subject && <p className="text-xs text-danger">{errors.subject}</p>}
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-text-secondary">
+                  Message <span className="text-danger">*</span>
+                </label>
+                <Textarea
+                  name="message"
+                  value={formData.message}
+                  onChange={handleInputChange}
+                  placeholder="Please provide details about your inquiry, grievance, or feedback..."
+                  aria-invalid={!!errors.message}
+                  className="min-h-[160px]"
+                />
+                {errors.message && <p className="text-xs text-danger">{errors.message}</p>}
+                <p className="text-xs text-text-secondary">Minimum 10 characters required.</p>
+              </div>
+
+              <div className="flex justify-end">
+                <Button type="submit" disabled={isSubmitting} className="min-w-[160px]">
+                  {isSubmitting ? 'Sending...' : 'Send Message'}
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+
+        <Card className="shadow-soft">
+          <CardHeader>
+            <CardTitle>Other Ways to Reach Us</CardTitle>
+            <CardDescription>We’re available on multiple channels.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="contact-info-item text-center">
+                <div className="contact-icon mb-2">📧</div>
+                <strong>Email</strong>
+                <p className="text-text-secondary mb-0 text-sm">support@divaksha.com</p>
+              </div>
+              <div className="contact-info-item text-center">
+                <div className="contact-icon mb-2">📞</div>
+                <strong>Phone</strong>
+                <p className="text-text-secondary mb-0 text-sm">+91 123 456 7890</p>
+              </div>
+              <div className="contact-info-item text-center">
+                <div className="contact-icon mb-2">🕒</div>
+                <strong>Business Hours</strong>
+                <p className="text-text-secondary mb-0 text-sm">Mon - Sat: 9 AM - 6 PM</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
   );
 };
 

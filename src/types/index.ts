@@ -50,11 +50,13 @@ export interface Order {
 }
 
 export interface Product {
+  sku?: string;
   productId: number;
   name: string;
   description?: string;
   price: number;
   imageUrl?: string;
+  stock: number | 0;
 }
 
 export interface CommissionLedger {
@@ -116,6 +118,7 @@ export interface CartItem {
   price: number;
   quantity: number;
   imageUrl?: string;
+  stock: number | 0;
 }
 
 export interface CartContextType {

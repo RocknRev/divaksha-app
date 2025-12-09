@@ -29,6 +29,7 @@ const ProductsList: React.FC = () => {
         authUtils.setReferralId(refId);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
 
   const loadProducts = async () => {
@@ -51,7 +52,10 @@ const ProductsList: React.FC = () => {
 
   const handleAddToCart = (product: Product, e: React.MouseEvent) => {
     e.stopPropagation();
-    addToCart(product, 1);
+    // guard: ensure product has stock before adding (extra safety)
+    if (product.stock && product.stock > 0) {
+      addToCart(product, 1);
+    }
   };
 
   const handleProductClick = (productId: number) => {
@@ -79,12 +83,11 @@ const ProductsList: React.FC = () => {
           <div className="w-full sm:w-80">
             <div className="relative">
               <Input
-                placeholder="Search products..."
+                placeholder="🔍 Search products..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10"
               />
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary">🔍</span>
             </div>
           </div>
         </div>
@@ -129,52 +132,101 @@ const ProductsList: React.FC = () => {
                   </p>
                 )}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                  {filteredProducts.map((product) => (
-                    <Card
-                      key={product.productId}
-                      className="shadow-soft cursor-pointer group flex flex-col"
-                      onClick={() => handleProductClick(product.productId)}
-                    >
-                      <div className="relative overflow-hidden rounded-t-2xl">
-                        <img
-                          src={
-                            product.imageUrl ||
-                            'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&h=600&fit=crop'
-                          }
-                          alt={product.name}
-                          className="h-48 w-full object-cover transition duration-300 group-hover:scale-105"
-                          onError={(e) => {
-                            (e.target as HTMLImageElement).src =
-                              'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&h=600&fit=crop';
-                          }}
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent opacity-0 group-hover:opacity-100 transition"></div>
-                      </div>
-                      <CardContent className="flex flex-1 flex-col gap-3 pt-4">
-                        <div className="space-y-1">
-                          <CardTitle className="text-lg">{product.name}</CardTitle>
-                          {product.description && (
-                            <CardDescription>
-                              {product.description.length > 90
-                                ? `${product.description.substring(0, 90)}...`
-                                : product.description}
-                            </CardDescription>
+                  {filteredProducts.map((product) => {
+                    const isOutOfStock = !product.stock || product.stock < 1;
+                    const isLowStock = !isOutOfStock && product.stock < 5;
+
+                    return (
+                      <Card
+                        key={product.productId}
+                        className="shadow-soft cursor-pointer group flex flex-col overflow-hidden"
+                        onClick={() => handleProductClick(product.productId)}
+                      >
+                        <div className="relative overflow-hidden rounded-t-2xl">
+                          <img
+                            src={product.imageUrl || '/images/Tycon-G-1-Prash.png'}
+                            alt={product.name}
+                            className="h-48 w-full object-cover transition duration-300 group-hover:scale-105"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src = '/images/Tycon-G-1-Prash.png';
+                            }}
+                          />
+
+                          {/* Overlay gradient on hover */}
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent opacity-0 group-hover:opacity-100 transition"></div>
+
+                          {/* Stock badge in top-left */}
+                          <div className="absolute top-3 left-3 z-10">
+                            {isOutOfStock ? (
+                              <div className="bg-red-600 text-white rounded-full px-3 py-1 text-xs font-semibold">Sold Out</div>
+                            ) : (
+                              <div className="bg-green-600 text-white rounded-full px-3 py-1 text-xs font-semibold">In Stock</div>
+                            )}
+                          </div>
+
+                          {/* Low stock / count in bottom-left */}
+                          <div className="absolute bottom-3 left-3 z-10">
+                            {!isOutOfStock && isLowStock && (
+                              <div className="bg-yellow-600 text-black rounded px-2 py-1 text-xs font-medium">
+                                Only {product.stock} left
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Big sold-out overlay if out of stock */}
+                          {isOutOfStock && (
+                            <div className="absolute inset-0 flex items-center justify-center bg-black/50">
+                              <div className="text-center text-white">
+                                <div className="text-2xl font-bold">Sold Out</div>
+                                <div className="text-sm mt-1">Currently unavailable</div>
+                              </div>
+                            </div>
                           )}
                         </div>
-                        <div className="mt-auto space-y-3">
-                          <div className="flex items-center justify-between">
-                            <p className="text-xl font-semibold text-primary">₹{product.price.toFixed(2)}</p>
+
+                        <CardContent className="flex flex-1 flex-col gap-3 pt-4">
+                          <div className="space-y-1">
+                            <CardTitle className="text-lg">{product.name}</CardTitle>
+                            {product.description && (
+                              <CardDescription>
+                                {product.description.length > 90
+                                  ? `${product.description.substring(0, 90)}...`
+                                  : product.description}
+                              </CardDescription>
+                            )}
                           </div>
-                          <div className="grid grid-cols-2 gap-2">
-                            <Button variant="outline" onClick={(e) => handleAddToCart(product, e)}>
-                              ➕ Add to Cart
-                            </Button>
-                            <Button onClick={(e) => handleBuyNow(product.productId, e)}>🛒 Buy Now</Button>
+
+                          <div className="mt-auto space-y-3">
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <p className="text-xl font-semibold text-primary">₹{product.price.toFixed(2)}</p>
+                                <p className="text-xs text-text-secondary">
+                                  {isOutOfStock ? (
+                                    <span className="text-red-600 font-medium">Out of stock</span>
+                                  ) : (
+                                    <span className="text-green-600 font-medium">Available: {product.stock}</span>
+                                  )}
+                                </p>
+                              </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-2">
+                              <Button
+                                variant="outline"
+                                onClick={(e) => handleAddToCart(product, e)}
+                                disabled={isOutOfStock}
+                              >
+                                ➕ to Cart
+                              </Button>
+                              <Button onClick={(e) => handleBuyNow(product.productId, e)} disabled={isOutOfStock}>
+                                🛒 Buy Now
+                              </Button>
+                            </div>
                           </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
                 </div>
               </div>
             )}

@@ -9,6 +9,7 @@ import { authUtils } from '../../utils/auth';
 import Alert from '../../components/Alert/Alert';
 import { affiliateUtils } from '../../utils/affiliate';
 import './RegisterUser.css';
+import { OtpInput } from '../../components/UI/otpInput';
 
 interface RegisterFormData {
   username: string;
@@ -117,10 +118,14 @@ const RegisterUser: React.FC = () => {
     setCanResend(false);
 
     try {
-      await authService.sendOtp(emailVal);
-      setShowOtpInput(true);
-      setOtpTimer(OTP_VALIDITY_SECONDS);
-      setOtpValue('');
+      const result = await authService.sendOtp(emailVal);
+      if (result === "SUCCESS") {
+        setShowOtpInput(true);
+        setOtpTimer(OTP_VALIDITY_SECONDS);
+        setOtpValue('');
+      }else {
+        setError(result);
+      }
     } catch (e: any) {
       const errorMessage = e?.response?.data?.message || e?.message || 'Failed to send OTP. Please try again.';
       setError(errorMessage);
@@ -159,16 +164,23 @@ const RegisterUser: React.FC = () => {
     setOtpError(null);
 
     try {
-      await authService.verifyOtp(emailVal, otpValue.trim());
-      setEmailVerified(true);
-      setShowOtpInput(false);
-      setOtpValue('');
-      setOtpTimer(0);
-      setCanResend(false);
-      setOtpError(null);
+      const otpStatus = await authService.verifyOtp(emailVal, otpValue.trim());
+      if (otpStatus === "SUCCESS") {
+        setEmailVerified(true);
+        setOtpError(null);
+        setEmailVerified(true);
+        setShowOtpInput(false);
+        setOtpValue('');
+        setOtpTimer(0);
+        setCanResend(false);
+        setOtpError(null);
+      }else if (otpStatus === "INVALID") {
+        setOtpError("Invalid OTP. Please try again.");
+      }else if (otpStatus === "EXPIRED") {
+        setOtpError("OTP expired. Please request a new one.");
+      }
     } catch (e: any) {
-      const errorMessage = e?.response?.data?.message || e?.message || 'Invalid or expired OTP. Please try again.';
-      setOtpError(errorMessage);
+      setOtpError("Unexpected error. Please try again.");
     } finally {
       setOtpVerifying(false);
     }
@@ -342,19 +354,12 @@ const RegisterUser: React.FC = () => {
                         </Form.Label>
                       </div>
                       <InputGroup>
-                        <Form.Control
-                          type="text"
-                          placeholder="Enter 6-digit OTP"
+                        <OtpInput
                           value={otpValue}
-                          onChange={(e) => {
-                            const value = e.target.value.replace(/\D/g, '').slice(0, 6);
-                            setOtpValue(value);
+                          onChange={(val) => {
+                            setOtpValue(val);
                             setOtpError(null);
                           }}
-                          maxLength={6}
-                          isInvalid={!!otpError}
-                          className="text-center fw-bold fs-5"
-                          style={{ letterSpacing: '0.5rem' }}
                         />
                         <Button
                           variant="primary"

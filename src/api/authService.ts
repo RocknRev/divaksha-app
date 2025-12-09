@@ -15,6 +15,7 @@ export interface RegisterRequest {
 }
 
 export interface AuthResponse {
+  verifyStatus?: string;
   token: string;
   user: User;
   referralCode?: string;
@@ -33,11 +34,13 @@ export const authService = {
     return response.data;
   },
 
-  sendOtp: async (email: string): Promise<void> => {
-    await apiClient.post('/auth/send-email-otp', { email });
+  sendOtp: async (email: string): Promise<string> => {
+    const response = await apiClient.post('/auth/send-email-otp', { email });
+    return response.data;
   },
 
-  verifyOtp: async (email: string, otp: string): Promise<void> => {
-    await apiClient.post('/auth/verify-email-otp', { email, otp });
+  verifyOtp: async (email: string, otp: string): Promise<string> => {
+    const response = await apiClient.post('/auth/verify-email-otp', { email, otp });
+    return response.data;
   },
 };

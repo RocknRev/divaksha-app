@@ -1,161 +1,18 @@
-.product-details-container {
-  min-height: 70vh;
+.product-details-container .sticky-card {
+  position: sticky;
+  top: 20px;
+  z-index: 5;
 }
 
-.product-image-card {
-  border-radius: 12px;
-  overflow: hidden;
+.product-detail-carousel-image {
+  width: auto;
+  max-width: 100%;
 }
 
-.product-image-wrapper-large {
-  width: 100%;
-  height: 500px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  border-radius: 12px;
+.product-title { font-size: 1.4rem; }
+
+.product-price { font-weight: 700; }
+
+@media (max-width: 991px) {
+  .sticky-card { position: relative; top: 0; }
 }
-
-.product-detail-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.3s ease;
-}
-
-.product-image-wrapper-large:hover .product-detail-image {
-  transform: scale(1.05);
-}
-
-.product-info-section {
-  padding: 1rem;
-}
-
-.product-title {
-  font-size: 2.5rem;
-  font-weight: bold;
-  color: #212529;
-  line-height: 1.2;
-}
-
-.product-price-section {
-  display: flex;
-  align-items: baseline;
-}
-
-.product-price-large {
-  font-size: 2.5rem;
-  font-weight: bold;
-  color: #28a745;
-}
-
-.product-description {
-  font-size: 1.1rem;
-  line-height: 1.6;
-  color: #495057;
-}
-
-.product-extended-description {
-  padding: 1.5rem;
-  background: #f8f9fa;
-  border-radius: 8px;
-  border-left: 4px solid #0d6efd;
-}
-
-.product-extended-description p {
-  margin-bottom: 1rem;
-  line-height: 1.7;
-}
-
-.product-extended-description p:last-child {
-  margin-bottom: 0;
-}
-
-.product-features {
-  padding: 1.5rem;
-  background: #f8f9fa;
-  border-radius: 8px;
-}
-
-.feature-list {
-  list-style: none;
-  padding-left: 0;
-  margin-bottom: 0;
-}
-
-.feature-list li {
-  padding: 0.5rem 0;
-  font-size: 1rem;
-  color: #495057;
-}
-
-.product-actions {
-  margin-top: 2rem;
-}
-
-.benefit-card {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  border-radius: 12px;
-  height: 100%;
-}
-
-.benefit-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1) !important;
-}
-
-.benefit-icon {
-  font-size: 3rem;
-}
-
-.usage-card {
-  border-radius: 12px;
-  background: #f8f9fa;
-}
-
-.usage-card ol {
-  padding-left: 1.5rem;
-}
-
-.usage-card li {
-  margin-bottom: 0.75rem;
-  line-height: 1.6;
-  color: #495057;
-}
-
-/* Responsive */
-@media (max-width: 992px) {
-  .product-title {
-    font-size: 2rem;
-  }
-
-  .product-price-large {
-    font-size: 2rem;
-  }
-
-  .product-image-wrapper-large {
-    height: 400px;
-  }
-}
-
-@media (max-width: 768px) {
-  .product-title {
-    font-size: 1.75rem;
-  }
-
-  .product-price-large {
-    font-size: 1.75rem;
-  }
-
-  .product-image-wrapper-large {
-    height: 300px;
-  }
-
-  .product-extended-description,
-  .product-features {
-    padding: 1rem;
-  }
-}
-
