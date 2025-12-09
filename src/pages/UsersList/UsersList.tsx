@@ -4,7 +4,7 @@ import { userService } from "../../api/userService";
 import Loader from "../../components/Loader/Loader";
 import Alert from "../../components/Alert/Alert";
 import { Input } from "../../components/UI/input";
-// import { Button } from "../../components/UI/button";
+import { Button } from "../../components/UI";
 
 
 import * as XLSX from "xlsx";
@@ -15,7 +15,7 @@ import "./UsersList.css";
 import { User } from "../../types";
 import { useNavigate } from "react-router-dom";
 import ConfirmModal from "../../components/ConfirmModal/ConfirmModal";
-import Button from "../../components/UI/button";
+// import Button from "../../components/UI/button";
 
 const UsersList: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);

@@ -217,8 +217,8 @@ const OrdersPage: React.FC = () => {
         buyerId: currentUser.id,
         items: [
           {
-            productId: product.productId,
-            quantity: deliveryData.quantity,
+        productId: product.productId,
+        quantity: deliveryData.quantity,
             price: product.price,
             sellerId: sellerId && !isNaN(sellerId) ? sellerId : null,
           },
@@ -675,16 +675,16 @@ const OrdersPage: React.FC = () => {
             <h4 className="fw-bold">Thank You for Your Order!</h4>
           </div>
           {createdOrder && (
-            <div className="order-details-card p-3 bg-light rounded mb-3">
+          <div className="order-details-card p-3 bg-light rounded mb-3">
               <p className="mb-2"><strong>Order ID:</strong> <code className="fs-5">#{createdOrder.orderId}</code></p>
-              <p className="mb-2"><strong>Product:</strong> {product.name}</p>
-              <p className="mb-2"><strong>Quantity:</strong> {deliveryData?.quantity || watchedQuantity}</p>
+            <p className="mb-2"><strong>Product:</strong> {product.name}</p>
+            <p className="mb-2"><strong>Quantity:</strong> {deliveryData?.quantity || watchedQuantity}</p>
               <p className="mb-2"><strong>Total Amount:</strong> ₹{createdOrder.totalAmount.toFixed(2)}</p>
               <p className="mb-2"><strong>Delivery To:</strong> {createdOrder.deliveryName}</p>
               <p className="mb-2"><strong>Delivery Address:</strong> {createdOrder.deliveryAddress}</p>
               <p className="mb-2"><strong>Contact:</strong> {createdOrder.deliveryPhone} ({createdOrder.deliveryEmail})</p>
               <p className="mb-0"><strong>Status:</strong> <Badge bg="warning">{createdOrder.status}</Badge></p>
-            </div>
+          </div>
           )}
           <BootstrapAlert variant="info" className="mb-0">
             <strong>Status: {createdOrder?.status || 'PENDING'}</strong>

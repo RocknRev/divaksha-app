@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Container, Row, Col, Card, Button, Form, InputGroup } from 'react-bootstrap';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { productService } from '../../api/productService';
 import { Product } from '../../types';
 import { authUtils } from '../../utils/auth';
 import { useCart } from '../../context/CartContext';
-import Loader from '../../components/Loader/Loader';
 import Alert from '../../components/Alert/Alert';
+import { Card, CardContent, CardDescription, CardTitle } from '../../components/UI/card';
+import { Button } from '../../components/UI/button';
+import { Input } from '../../components/UI/input';
+import { Skeleton } from '../../components/UI/skeleton';
 import './ProductsList.css';
 
 const ProductsList: React.FC = () => {
@@ -20,7 +22,6 @@ const ProductsList: React.FC = () => {
 
   useEffect(() => {
     loadProducts();
-    // Store referral from URL if present
     const refParam = searchParams.get('ref');
     if (refParam) {
       const refId = parseInt(refParam, 10);
@@ -44,12 +45,12 @@ const ProductsList: React.FC = () => {
   };
 
   const handleBuyNow = (productId: number, e?: React.MouseEvent) => {
-    e?.stopPropagation(); // Prevent card click event
+    e?.stopPropagation();
     navigate(`/orders/${productId}`);
   };
 
   const handleAddToCart = (product: Product, e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent card click event
+    e.stopPropagation();
     addToCart(product, 1);
   };
 
@@ -57,10 +58,8 @@ const ProductsList: React.FC = () => {
     navigate(`/products/${productId}`);
   };
 
-  // Filter products based on search
   const filteredProducts = useMemo(() => {
     if (!searchQuery.trim()) return products;
-    
     const query = searchQuery.toLowerCase();
     return products.filter(
       (product) =>
@@ -70,134 +69,119 @@ const ProductsList: React.FC = () => {
   }, [products, searchQuery]);
 
   return (
-    <Container className="products-list-container py-4">
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2 className="fw-bold">Products</h2>
-        <div className="search-container" style={{ maxWidth: '400px', width: '100%' }}>
-          <InputGroup>
-            <InputGroup.Text>🔍</InputGroup.Text>
-            <Form.Control
-              type="text"
-              placeholder="Search products..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </InputGroup>
-        </div>
-      </div>
-
-      {error && <Alert variant="danger" message={error} onClose={() => setError(null)} />}
-
-      {loading ? (
-        <div className="products-skeleton">
-          <Row>
-            {[1, 2, 3, 4].map((i) => (
-              <Col key={i} xs={12} sm={6} md={4} lg={3} className="mb-4">
-                <Card className="h-100 product-card">
-                  <div className="skeleton-image"></div>
-                  <Card.Body>
-                    <div className="skeleton-text mb-2"></div>
-                    <div className="skeleton-text short"></div>
-                  </Card.Body>
-                </Card>
-              </Col>
-            ))}
-          </Row>
-        </div>
-      ) : (
-        <>
-          {filteredProducts.length === 0 ? (
-            <div className="text-center py-5">
-              <div className="mb-3">📦</div>
-              <h4 className="text-muted">No products found</h4>
-              <p className="text-muted">
-                {searchQuery ? 'Try adjusting your search query' : 'No products available at the moment.'}
-              </p>
-              {searchQuery && (
-                <Button variant="outline-primary" onClick={() => setSearchQuery('')}>
-                  Clear Search
-                </Button>
-              )}
+    <div className="min-h-screen bg-background">
+      <div className="mx-auto max-w-6xl px-4 py-8 space-y-6">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-text-primary">Products</h1>
+            <p className="text-text-secondary text-sm">Discover Tycon’s G1 Prash and more.</p>
+          </div>
+          <div className="w-full sm:w-80">
+            <div className="relative">
+              <Input
+                placeholder="Search products..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10"
+              />
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary">🔍</span>
             </div>
-          ) : (
-            <>
-              {searchQuery && (
-                <p className="text-muted mb-3">
-                  Found {filteredProducts.length} product{filteredProducts.length !== 1 ? 's' : ''}
-                </p>
-              )}
-              <Row>
-                {filteredProducts.map((product) => (
-                  <Col key={product.productId} xs={12} sm={6} md={4} lg={3} className="mb-4">
+          </div>
+        </div>
+
+        {error && <Alert variant="danger" message={error} onClose={() => setError(null)} />}
+
+        {loading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <Card key={i} className="shadow-soft">
+                <Skeleton className="h-48 w-full rounded-2xl" />
+                <CardContent className="space-y-2 pt-4">
+                  <Skeleton className="h-5 w-2/3" />
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-1/2" />
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        ) : (
+          <>
+            {filteredProducts.length === 0 ? (
+              <Card className="shadow-soft">
+                <CardContent className="py-10 text-center space-y-3">
+                  <div className="text-4xl">📦</div>
+                  <CardTitle>No products found</CardTitle>
+                  <CardDescription>
+                    {searchQuery ? 'Try adjusting your search query.' : 'No products available at the moment.'}
+                  </CardDescription>
+                  {searchQuery && (
+                    <Button variant="outline" onClick={() => setSearchQuery('')}>
+                      Clear Search
+                    </Button>
+                  )}
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="space-y-3">
+                {searchQuery && (
+                  <p className="text-sm text-text-secondary">
+                    Found {filteredProducts.length} product{filteredProducts.length !== 1 ? 's' : ''}
+                  </p>
+                )}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                  {filteredProducts.map((product) => (
                     <Card
-                      className="h-100 product-card shadow-sm border-0"
-                      style={{ cursor: 'pointer' }}
+                      key={product.productId}
+                      className="shadow-soft cursor-pointer group flex flex-col"
                       onClick={() => handleProductClick(product.productId)}
                     >
-                      <div className="product-image-wrapper">
-                        <Card.Img
-                          variant="top"
-                          src={product.imageUrl || 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&h=400&fit=crop'}
+                      <div className="relative overflow-hidden rounded-t-2xl">
+                        <img
+                          src={
+                            product.imageUrl ||
+                            'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&h=600&fit=crop'
+                          }
                           alt={product.name}
-                          className="product-image"
+                          className="h-48 w-full object-cover transition duration-300 group-hover:scale-105"
                           onError={(e) => {
-                            (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&h=400&fit=crop';
+                            (e.target as HTMLImageElement).src =
+                              'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&h=600&fit=crop';
                           }}
                         />
-                        <div className="product-overlay">
-                          <Button
-                            variant="light"
-                            className="overlay-button"
-                            onClick={(e) => handleProductClick(product.productId)}
-                          >
-                            View Details
-                          </Button>
-                        </div>
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent opacity-0 group-hover:opacity-100 transition"></div>
                       </div>
-                      <Card.Body className="d-flex flex-column">
-                        <Card.Title className="fw-bold mb-2">{product.name}</Card.Title>
-                        {product.description && (
-                          <Card.Text className="flex-grow-1 text-muted small mb-3">
-                            {product.description.length > 80
-                              ? `${product.description.substring(0, 80)}...`
-                              : product.description}
-                          </Card.Text>
-                        )}
-                        <div className="mt-auto pt-2">
-                          <div className="d-flex justify-content-between align-items-center mb-3">
-                            <Card.Text className="product-price fs-4 fw-bold text-primary mb-0">
-                              ₹{product.price.toFixed(2)}
-                            </Card.Text>
+                      <CardContent className="flex flex-1 flex-col gap-3 pt-4">
+                        <div className="space-y-1">
+                          <CardTitle className="text-lg">{product.name}</CardTitle>
+                          {product.description && (
+                            <CardDescription>
+                              {product.description.length > 90
+                                ? `${product.description.substring(0, 90)}...`
+                                : product.description}
+                            </CardDescription>
+                          )}
+                        </div>
+                        <div className="mt-auto space-y-3">
+                          <div className="flex items-center justify-between">
+                            <p className="text-xl font-semibold text-primary">₹{product.price.toFixed(2)}</p>
                           </div>
-                          <div className="d-grid gap-2">
-                            <Button
-                              variant="outline-primary"
-                              className="fw-semibold"
-                              size="lg"
-                              onClick={(e) => handleAddToCart(product, e)}
-                            >
+                          <div className="grid grid-cols-2 gap-2">
+                            <Button variant="outline" onClick={(e) => handleAddToCart(product, e)}>
                               ➕ Add to Cart
                             </Button>
-                            <Button
-                              variant="primary"
-                              className="fw-semibold"
-                              size="lg"
-                              onClick={(e) => handleBuyNow(product.productId, e)}
-                            >
-                              🛒 Buy Now
-                            </Button>
+                            <Button onClick={(e) => handleBuyNow(product.productId, e)}>🛒 Buy Now</Button>
                           </div>
                         </div>
-                      </Card.Body>
+                      </CardContent>
                     </Card>
-                  </Col>
-                ))}
-              </Row>
-            </>
-          )}
-        </>
-      )}
-    </Container>
+                  ))}
+                </div>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    </div>
   );
 };
 

@@ -1,44 +1,63 @@
-import React from "react";
-import clsx from "clsx";
+import * as React from 'react';
+import { Slot } from '@radix-ui/react-slot';
+import { cn } from '../../utils/cn';
 
-type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
-  variant?: "default" | "ghost" | "danger" | "success";
-  size?: "sm" | "md" | "lg";
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  asChild?: boolean;
+  variant?:
+    | 'primary'
+    | 'secondary'
+    | 'ghost'
+    | 'outline'
+    | 'danger'
+    | 'success'
+    | 'default'
+    | 'link';
+  size?: 'sm' | 'md' | 'lg' | 'icon';
+}
+
+const variantClasses: Record<NonNullable<ButtonProps['variant']>, string> = {
+  primary:
+    'bg-primary text-white hover:bg-primary-hover shadow-md hover:shadow-lg focus-visible:ring-2 focus-visible:ring-primary/60',
+  secondary:
+    'bg-surface text-text-primary border border-card-border hover:bg-gray-50 focus-visible:ring-2 focus-visible:ring-primary/40',
+  outline:
+    'border border-card-border text-text-primary hover:bg-gray-50 focus-visible:ring-2 focus-visible:ring-primary/40',
+  ghost:
+    'text-text-primary hover:bg-gray-100 focus-visible:ring-2 focus-visible:ring-primary/30',
+  danger:
+    'bg-danger text-white hover:bg-red-600 focus-visible:ring-2 focus-visible:ring-danger/60',
+  success:
+    'bg-success text-white hover:bg-emerald-600 focus-visible:ring-2 focus-visible:ring-success/60',
+  default:
+    'bg-surface text-text-primary border border-card-border hover:bg-gray-50 focus-visible:ring-2 focus-visible:ring-primary/40',
+  link: 'text-primary hover:text-primary-hover underline-offset-4 hover:underline',
 };
 
-const variantClasses: Record<string, string> = {
-  default: "!bg-slate-900 !text-white hover:!bg-slate-800",
-  ghost: "!bg-transparent hover:!bg-slate-100 !text-slate-900",
-  danger: "!bg-rose-600 !text-white hover:!bg-rose-700",
-  success: "!bg-emerald-600 !text-white hover:!bg-emerald-700",
+const sizeClasses: Record<NonNullable<ButtonProps['size']>, string> = {
+  sm: 'h-9 px-3 text-sm',
+  md: 'h-10 px-4 text-sm',
+  lg: 'h-12 px-5 text-base',
+  icon: 'h-10 w-10',
 };
 
-const sizeClasses: Record<string, string> = {
-  sm: "px-2 py-1 text-sm",
-  md: "px-3 py-2 text-sm",
-  lg: "px-4 py-2 text-base",
-};
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ className, variant = 'primary', size = 'md', asChild, ...props }, ref) => {
+    const Comp = asChild ? Slot : 'button';
+    return (
+      <Comp
+        className={cn(
+          'inline-flex items-center justify-center rounded-xl font-semibold transition-transform duration-150 active:scale-[0.98] focus-visible:outline-none disabled:opacity-60 disabled:cursor-not-allowed',
+          variantClasses[variant],
+          sizeClasses[size],
+          className
+        )}
+        ref={ref}
+        {...props}
+      />
+    );
+  }
+);
+Button.displayName = 'Button';
 
-export const Button: React.FC<ButtonProps> = ({
-  children,
-  className,
-  variant = "default",
-  size = "md",
-  ...rest
-}) => {
-  return (
-    <button
-      className={clsx(
-        "inline-flex items-center justify-center rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1",
-      `!${variantClasses[variant]}`,   // <-- FORCE OVERRIDE        
-      sizeClasses[size],
-        className
-      )}
-      {...rest}
-    >
-      {children}
-    </button>
-  );
-};
-
-export default Button;
+export { Button };

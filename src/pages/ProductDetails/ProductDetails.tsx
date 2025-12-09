@@ -271,7 +271,7 @@ const ProductDetails: React.FC = () => {
       </Row>
 
       {/* Safety Information */}
-      <Row className="mt-4">
+      {/* <Row className="mt-4">
         <Col lg={8} className="mx-auto">
           <BootstrapAlert variant="info" className="mb-0">
             <BootstrapAlert.Heading className="h6 fw-bold">
@@ -284,7 +284,7 @@ const ProductDetails: React.FC = () => {
             </p>
           </BootstrapAlert>
         </Col>
-      </Row>
+      </Row> */}
     </Container>
   );
 };

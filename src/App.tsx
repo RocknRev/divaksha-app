@@ -23,6 +23,7 @@ import LedgerList from './pages/LedgerList/LedgerList';
 import ShiftHistoryList from './pages/ShiftHistoryList/ShiftHistoryList';
 import './App.css';
 import ReportsHome from './pages/Reports/ReportsHome';
+import { Toaster } from './components/UI/toaster';
 
 function App() {
   return (
@@ -59,11 +60,8 @@ function App() {
             <Route path="/ledger" element={<LedgerList />} />
             <Route path="/shift-history" element={<ShiftHistoryList />} />
             <Route path="/reports" element={<ReportsHome />} />
-            {/* <Route path="/reports/sales" element={<SalesReport />} />
-            <Route path="/reports/orders" element={<OrdersReport />} />
-            <Route path="/reports/users" element={<UsersReport />} />
-            <Route path="/reports/ledger" element={<LedgerReport />} /> */}
           </Routes>
+          <Toaster />
         </div>
       </Router>
       </CartProvider>
