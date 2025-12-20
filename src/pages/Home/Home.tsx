@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../../components/UI/card';
 import { Button } from '../../components/UI/button';
 import { Badge } from '../../components/UI/badge';
+import { Sparkles } from 'lucide-react';
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
@@ -46,22 +47,38 @@ const Home: React.FC = () => {
   ];
 
   return (
-    <div className="bg-background min-h-screen">
+    <div className="min-h-screen">
       <div className="mx-auto max-w-6xl px-4 py-10 space-y-12">
         {/* Hero */}
-        <Card className="bg-gradient-to-br from-primary to-primary-hover text-white shadow-soft border-none">
-          <CardContent className="py-12 text-center space-y-4">
-            <Badge variant="outline" className="bg-white/15 text-white border-white/30 px-4 py-1">
+        <Card className="relative overflow-hidden border border-border/60 bg-background/95 shadow-lg">
+          {/* subtle accent glow */}
+          <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,rgba(99,102,241,0.12),transparent_60%)]" />
+
+          <CardContent className="py-14 text-center space-y-5">
+            <Badge
+              variant="outline"
+              className="mx-auto w-fit border-border/50 text-muted-foreground"
+            >
               Premium Affiliate + Commerce
             </Badge>
-            <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">
-              Welcome to Divaksha — Tycon’s G1 Prash
+
+            <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight">
+              <div className="inline-flex items-center gap-2 text-primary">
+                Welcome to <span className="text-primary">Divaksha</span><Sparkles className="h-4 w-4" />
+              </div>
             </h1>
-            <p className="text-base sm:text-lg text-white/80 max-w-2xl mx-auto">
-              Your gateway to premium wellness and referral earnings. Join thousands already earning passive income.
+
+            <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto">
+              Your gateway to premium wellness and referral earnings.
+              Build income with a platform designed for long-term trust.
             </p>
-            <div className="text-white/90">
-              {isAuthenticated && <p className="mb-3 text-sm">Welcome back, <strong>{currentUser?.username}</strong>!</p>}
+
+            <div className="pt-2 text-sm text-muted-foreground">
+              {isAuthenticated && (
+                <p className="mb-3">
+                  Welcome back, <span className="font-medium text-foreground">{currentUser?.username}</span>
+                </p>
+              )}
               {actions}
             </div>
           </CardContent>

@@ -241,14 +241,15 @@ const ProductDetails: React.FC = () => {
 
   return (
     <Container className="product-details-container py-5">
+      <div className="rounded-3xl bg-white/80 backdrop-blur border shadow-lg p-4">
       {/* Hero top: image carousel + purchase card */}
       <Row className="gy-4 align-items-center">
         <Col lg={7}>
-          <Card className="border-0 shadow-sm">
+          <Card className="p-3 h-100 border rounded-3 bg-light">
             <Carousel variant="dark" indicators={carouselImages.length > 1} interval={4000}>
               {carouselImages.map((src, i) => (
                 <Carousel.Item key={i}>
-                  <div className="d-flex justify-content-center align-items-center p-4" style={{ minHeight: 360 }}>
+                  <div className="d-flex justify-content-center align-items-center p-4" style={{ minHeight: 360, background: 'linear-gradient(180deg, #f8fafc, #ffffff)' }}>
                     <img
                       src={src}
                       alt={`${product.name} ${i + 1}`}
@@ -267,7 +268,7 @@ const ProductDetails: React.FC = () => {
         </Col>
 
         <Col lg={5}>
-          <Card className="p-4 shadow-sm sticky-card border-0">
+        <Card className="p-3 h-100 border rounded-3 bg-light">
             <div className="d-flex align-items-start justify-content-between mb-2">
               <div>
                 {isOutOfStock ? (
@@ -281,7 +282,7 @@ const ProductDetails: React.FC = () => {
               </div>
             </div>
 
-            <h2 className="product-title mb-2">{product.name}</h2>
+            <h2 className="product-title mb-2 fw-bold">{product.name}</h2>
             <div className="mb-3">
               <span className="product-price h3 fw-bold">₹{product.price.toFixed(2)}</span>
               <div className="text-muted small">per unit</div>
@@ -295,6 +296,7 @@ const ProductDetails: React.FC = () => {
             {product.description && <p className="text-muted mb-3">{product.description}</p>}
 
             {/* Quantity and actions */}
+            <div className="d-flex align-items-center justify-content-between rounded-3 border px-3 py-2">
             <Row className="align-items-center gy-2">
               <Col xs="auto">
                 <div className="d-flex align-items-center border rounded-3 px-2 py-1">
@@ -307,7 +309,7 @@ const ProductDetails: React.FC = () => {
                     −
                   </Button>
                   <div className="px-3 mx-2 fw-bold fs-5">{quantity}</div>
-                  <Button variant="light" size="sm" onClick={() => setQuantity(quantity + 1)} disabled={isOutOfStock || quantity >= product.stock}>
+                  <Button variant="light" size="sm" onClick={() => setQuantity(quantity + 1)} disabled={isOutOfStock || quantity >= product.stock} className="fw-semibold">
                     +
                   </Button>
                 </div>
@@ -317,15 +319,16 @@ const ProductDetails: React.FC = () => {
                 <div className="fw-bold">₹{(product.price * quantity).toFixed(2)}</div>
               </Col>
             </Row>
+            </div>
 
             <div className="mt-4">
-              <Button variant="primary" size="lg" className="w-100 mb-2" onClick={handleBuyNow} disabled={isOutOfStock}>
+              <Button variant="primary" size="lg" className="w-100 mb-2 fw-semibold" onClick={handleBuyNow} disabled={isOutOfStock}>
                 🛒 Buy Now - ₹{(product.price * quantity).toFixed(2)}
               </Button>
               <Button variant="outline-primary" size="lg" className="w-100 mb-2" onClick={handleAddToCart} disabled={isOutOfStock}>
                 ➕ Add to Cart
               </Button>
-              <Button variant="light" size="sm" className="w-100" onClick={() => navigate('/products')}>
+              <Button variant="outline-secondary" size="lg" className="w-100" onClick={() => navigate('/products')}>
                 ← Back to Products
               </Button>
             </div>
@@ -338,12 +341,12 @@ const ProductDetails: React.FC = () => {
           </Card>
         </Col>
       </Row>
-
+      </div>
       {/* Tabs: Overview, Benefits, Ingredients, Body Systems, Dosage, Safety, FAQ */}
       <Row className="mt-5">
         <Col>
-          <Card className="border-0 shadow-sm">
-            <Card.Body>
+          <Card className="p-3 h-100 border rounded-3 bg-light">
+            <Card.Body className="p-4">
               <Tabs defaultActiveKey="overview" id="product-details-tabs" className="mb-3">
                 <Tab eventKey="overview" title="Overview">
                   <h4 className="fw-bold">{product.name}</h4>
@@ -357,7 +360,7 @@ const ProductDetails: React.FC = () => {
                   <ListGroup horizontal className="flex-wrap">
                     {highlights.map((h, i) => (
                       <ListGroup.Item key={i} className="border-0 pe-3">
-                        <Badge bg="info" className="me-2">
+                        <Badge bg="info" className="me-2 badge-soft">
                           ✓
                         </Badge>
                         {h}
@@ -370,9 +373,9 @@ const ProductDetails: React.FC = () => {
                   <Row className="gy-3">
                     {benefitCards.map((b, i) => (
                       <Col md={6} lg={3} key={i}>
-                        <Card className="h-100 border-0 shadow-sm">
-                          <Card.Body className="d-flex flex-column">
-                            <div className="display-6 mb-2">{b.icon}</div>
+                        <Card className="p-3 h-100 border rounded-3 bg-light">
+                          <Card.Body className="d-flex flex-column p-4">
+                            <div className="fs-3 mb-2">{b.icon}</div>
                             <h6 className="fw-bold">{b.title}</h6>
                             <ul className="mt-2 mb-0 ps-3">
                               {b.body.map((line, idx) => (
@@ -419,7 +422,7 @@ const ProductDetails: React.FC = () => {
                   <Row>
                     {bodySystems.map((s, i) => (
                       <Col md={4} lg={3} key={i} className="mb-2">
-                        <Badge bg="secondary" className="me-2">
+                        <Badge bg="info" className="me-2 badge-soft">
                           {i + 1}
                         </Badge>
                         <span className="text-muted">{s}</span>
@@ -480,7 +483,7 @@ const ProductDetails: React.FC = () => {
       {/* Footer CTA */}
       <Row className="mt-4">
         <Col>
-          <Card className="p-3 border-0 shadow-sm">
+          <Card className="p-3 h-100 border rounded-3 bg-light">
             <Row className="align-items-center">
               <Col md={8}>
                 <h5 className="mb-1">Ready to purchase?</h5>

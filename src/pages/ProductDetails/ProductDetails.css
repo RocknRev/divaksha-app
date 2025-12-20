@@ -13,6 +13,55 @@
 
 .product-price { font-weight: 700; }
 
+.text-muted {
+  color: #6b7280 !important; /* better readability */
+}
+
+.badge-soft {
+  background-color: #e5e7eb;
+  color: #374151;
+}
+
+/* Tabs container */
+.nav-tabs {
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* All tabs */
+.nav-tabs .nav-link {
+  color: #6b7280; /* gray-500 */
+  font-weight: 500;
+  background: transparent;
+  border: none;
+  padding: 0.75rem 1rem;
+}
+
+/* Hover */
+.nav-tabs .nav-link:hover {
+  color: #374151; /* gray-700 */
+}
+
+/* Active tab */
+.nav-tabs .nav-link.active {
+  color: #111827; /* gray-900 */
+  font-weight: 600;
+  background: transparent;
+  border: none;
+  position: relative;
+}
+
+/* Active indicator (SUBTLE) */
+.nav-tabs .nav-link.active::after {
+  content: '';
+  position: absolute;
+  left: 20%;
+  right: 20%;
+  bottom: -1px;
+  height: 2px;
+  background-color: rgba(var(--bs-primary-rgb), 0.6); /* muted blue */
+  border-radius: 9999px;
+}
+
 @media (max-width: 991px) {
   .sticky-card { position: relative; top: 0; }
 }

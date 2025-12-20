@@ -23,10 +23,19 @@ const Navbar: React.FC = () => {
   };
 
   return (
-    <BootstrapNavbar bg="dark" variant="dark" expand="lg" className="navbar-custom">
+    <BootstrapNavbar bg='dark' variant='dark' fixed="top" expand="lg" className="navbar-custom navbar-light">
       <Container>
-        <BootstrapNavbar.Brand as={Link} to="/" className="fw-bold">
-          🚀 Divaksha
+        <BootstrapNavbar.Brand
+          as={Link}
+          to="/"
+          className="navbar-brand d-flex align-items-center gap-2"
+        >
+          <img
+            src="/navimg.png"
+            alt="Divaksha logo"
+            className="navbar-logo"
+          />
+          <span className="navbar-title">Divaksha</span>
         </BootstrapNavbar.Brand>
         <BootstrapNavbar.Toggle aria-controls="basic-navbar-nav" />
         <BootstrapNavbar.Collapse id="basic-navbar-nav">
@@ -78,7 +87,7 @@ const Navbar: React.FC = () => {
             <Nav.Link as={Link} to="/cart" className={isActive('/cart') ? 'active' : ''}>
               🛒 Cart
               {cartItemCount > 0 && (
-                <Badge bg="danger" className="ms-1" pill>
+                <Badge bg="success" className="ms-1" pill>
                   {cartItemCount}
                 </Badge>
               )}

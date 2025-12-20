@@ -34,8 +34,18 @@ export const authService = {
     return response.data;
   },
 
+  resetPassword: async(email: string, newPassword: string): Promise<string> => {
+    const response = await apiClient.post('/auth/reset-password', { email, newPassword });
+    return response.data;
+  },
+
   sendOtp: async (email: string): Promise<string> => {
     const response = await apiClient.post('/auth/send-email-otp', { email });
+    return response.data;
+  },
+
+  sendOtpForPasswordReset: async (email: string): Promise<string> => {
+    const response = await apiClient.post('/auth/send-email-otp-pwd-reset', { email });
     return response.data;
   },
 

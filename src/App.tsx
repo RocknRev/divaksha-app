@@ -29,41 +29,61 @@ function App() {
   return (
     <AuthProvider>
       <CartProvider>
-        <Router>
-          <div className="App">
-            <Navbar />
-            <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<RegisterUser />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/aff/:code" element={<AffiliateLanding />} />
-            <Route path="/users" element={<UsersList />} />
-            <Route path="/users/register" element={<RegisterUser />} />
-            <Route path="/users/:id" element={<UserDetail />} />
-            <Route path="/sales" element={<SalesList />} />
-            <Route path="/orders" element={<OrdersPage />} />
-            <Route path="/orders/:productId" element={<OrdersPage />} />
-            <Route
-              path="/admin/orders"
-              element={
-                <ProtectedRoute requireAdmin>
-                  <AdminOrders />
-                </ProtectedRoute>
-              }
-            />
-                  <Route path="/products" element={<ProductsList />} />
-                  <Route path="/products/:productId" element={<ProductDetails />} />
-            <Route path="/cart" element={<Cart />} />
-            <Route path="/contact" element={<ContactUs />} />
-            <Route path="/aff/:code" element={<AffiliateLanding />} />
-            <Route path="/ledger" element={<LedgerList />} />
-            <Route path="/shift-history" element={<ShiftHistoryList />} />
-            <Route path="/reports" element={<ReportsHome />} />
-          </Routes>
+      <Router>
+        <div className="App min-h-screen">
+          <Navbar />
+          {/* Background image */}
+          <div className='app-body'>
+          {/* <div
+            className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(circle_at_top,rgba(59,130,246,0.12),transparent_60%)]"/> */}
+          <div
+            className="pointer-events-none absolute inset-0 z-0 bg-cover bg-center"
+            style={{
+              backgroundImage: "url('/img5.jpg')",
+              opacity: 0.07,
+            }}
+          />
+
+          <div className="relative min-h-screen">
+            
+            {/* App pages */}
+            <main className="relative z-10 app-content">
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<RegisterUser />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/aff/:code" element={<AffiliateLanding />} />
+                <Route path="/users" element={<UsersList />} />
+                <Route path="/users/register" element={<RegisterUser />} />
+                <Route path="/users/:id" element={<UserDetail />} />
+                <Route path="/sales" element={<SalesList />} />
+                <Route path="/orders" element={<OrdersPage />} />
+                <Route path="/orders/:productId" element={<OrdersPage />} />
+                <Route
+                  path="/admin/orders"
+                  element={
+                    <ProtectedRoute requireAdmin>
+                      <AdminOrders />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route path="/products" element={<ProductsList />} />
+                <Route path="/products/:productId" element={<ProductDetails />} />
+                <Route path="/cart" element={<Cart />} />
+                <Route path="/contact" element={<ContactUs />} />
+                <Route path="/ledger" element={<LedgerList />} />
+                <Route path="/shift-history" element={<ShiftHistoryList />} />
+                <Route path="/reports" element={<ReportsHome />} />
+              </Routes>
+            </main>
+          </div>
+
           <Toaster />
+          </div>
         </div>
       </Router>
+
       </CartProvider>
     </AuthProvider>
   );

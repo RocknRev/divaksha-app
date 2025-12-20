@@ -22,7 +22,7 @@ const variantClasses: Record<NonNullable<ButtonProps['variant']>, string> = {
   secondary:
     'bg-surface text-text-primary border border-card-border hover:bg-gray-50 focus-visible:ring-2 focus-visible:ring-primary/40',
   outline:
-    'border border-card-border text-text-primary hover:bg-gray-50 focus-visible:ring-2 focus-visible:ring-primary/40',
+    'border border-card-border text-text-primary hover:bg-gray-50 focus-visible:ring-2 focus-visible:ring-primary/40 hover:border-primary hover:text-primary-hover shadow-sm hover:shadow-md',
   ghost:
     'text-text-primary hover:bg-gray-100 focus-visible:ring-2 focus-visible:ring-primary/30',
   danger:

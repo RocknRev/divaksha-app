@@ -6,9 +6,24 @@
 
 /* Global tokens */
 :root {
+  --brand-blue: 59 130 246; /* Tailwind blue-500 */
+  --navbar-height: 64px;
+}
+
+.text-primary,
+.bg-primary {
+  --tw-bg-opacity: 1;
+}
+
+.btn-primary {
+  background-color: rgb(var(--brand-blue)) !important;
+  border-color: rgb(var(--brand-blue)) !important;
+}
+
+/* :root {
   color: #1f2937;
   background-color: #f7f7fb;
-}
+} */
 
 * {
   @apply transition-colors duration-200;
@@ -19,7 +34,7 @@ body {
   font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  @apply bg-background text-text-primary;
+  @apply text-text-primary;
 }
 
 h1,

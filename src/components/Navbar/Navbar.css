@@ -23,3 +23,28 @@
   font-weight: 600;
 }
 
+/* Logo image */
+.navbar-logo {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* Brand text */
+.navbar-title {
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: inherit;
+  letter-spacing: -0.3px;
+}
+
+.navbar-brand:hover .navbar-logo {
+  transform: scale(1.05);
+  transition: transform 0.15s ease;
+}
+
+.navbar-logo {
+  background: #ffffff;
+  box-shadow: 0 0 0 1px #e5e7eb;
+}

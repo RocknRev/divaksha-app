@@ -1,7 +1,10 @@
 .App {
   min-height: 100vh;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-  background-attachment: fixed;
+  position: relative;
+  /* background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); */
+  /* background-attachment: fixed; */
+  background-color: transparent; 
+  font-family: 'Geist';
 }
 
 /* Override Bootstrap container padding for better spacing */
@@ -13,6 +16,14 @@
 /* Smooth scrolling */
 html {
   scroll-behavior: smooth;
+}
+
+.app-body{
+  margin-top: 10px;
+}
+
+.app-content {
+  padding-top: var(--navbar-height);
 }
 
 /* Custom scrollbar */
